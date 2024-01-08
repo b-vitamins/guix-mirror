@@ -8,6 +8,7 @@
 ;;; Copyright © 2021, 2024 Efraim Flashner <efraim@flashner.co.il>
 ;;; Copyright © 2024 Herman Rimm <herman@rimm.ee>
 ;;; Copyright © 2024 Maxim Cournoyer <maxim.cournoyer@gmail.com>
+;;; Copyright © 2024 Nicolas Graves <ngraves@ngraves.fr>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -137,11 +138,8 @@ to NAME and VERSION."
                                           (map search-path-specification->sexp
                                                search-paths))))))
 
-  (gexp->derivation name builder
-                    #:system system
-                    #:target #f
-                    #:graft? #f
-                    #:guile-for-build guile))
+  (mbegin %store-monad
+    (return builder)))
 
 (define* (cargo-cross-build name
                             #:key
@@ -201,14 +199,11 @@ to NAME and VERSION."
                                           (map search-path-specification->sexp
                                                search-paths))
                        #:native-search-paths '#$(sexp->gexp
-                                          (map search-path-specification->sexp
-                                               native-search-paths))))))
+                                                 (map search-path-specification->sexp
+                                                      native-search-paths))))))
 
-  (gexp->derivation name builder
-                    #:system system
-                    #:target target
-                    #:graft? #f
-                    #:guile-for-build guile))
+  (mbegin %store-monad
+    (return builder)))
 
 (define (package-cargo-inputs p)
   (apply
