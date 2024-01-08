@@ -3,6 +3,7 @@
 ;;; Copyright © 2019, 2020, 2021, 2022 Guillaume Le Vaillant <glv@posteo.net>
 ;;; Copyright © 2021 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2022 Pierre Neidhardt <mail@ambrevar.xyz>
+;;; Copyright © 2024 Nicolas Graves <ngraves@ngraves.fr>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -320,11 +321,8 @@ set up using CL source package conventions."
                                                   search-paths))
                           #:inputs #$(input-tuples->gexp inputs))))))
 
-    (mlet %store-monad ((guile (package->derivation (or guile (default-guile))
-                                                    system #:graft? #f)))
-      (gexp->derivation name builder
-                        #:system system
-                        #:guile-for-build guile))))
+    (mbegin %store-monad
+      (return builder))))
 
 (define asdf-build-system/sbcl
   (build-system
