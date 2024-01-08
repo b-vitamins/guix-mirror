@@ -6,6 +6,7 @@
 ;;; Copyright © 2020 Jakub Kądziołka <kuba@kadziolka.net>
 ;;; Copyright © 2021 Maxime Devos <maximedevos@telenet.be>
 ;;; Copyright © 2022 Maxim Cournoyer <maxim.cournoyer@gmail.com>
+;;; Copyright © 2024 Nicolas Graves <ngraves@ngraves.fr>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -177,14 +178,8 @@ provides a 'CMakeLists.txt' file as its build system."
                     #:strip-flags #$strip-flags
                     #:strip-directories #$strip-directories))))
 
-  (mlet %store-monad ((guile (package->derivation (or guile (default-guile))
-                                                  system #:graft? #f)))
-    (gexp->derivation name builder
-                      #:graft? #f                 ;consistent with 'gnu-build'
-                      #:system system
-                      #:guile-for-build guile
-                      #:allowed-references allowed-references
-                      #:disallowed-references disallowed-references)))
+  (mbegin %store-monad
+    (return builder)))
 
 
 ;;;
@@ -266,14 +261,8 @@ build system."
                     #:strip-flags #$strip-flags
                     #:strip-directories #$strip-directories))))
 
-  (mlet %store-monad ((guile (package->derivation (or guile (default-guile))
-                                                  system #:graft? #f)))
-    (gexp->derivation name builder
-                      #:graft? #f                 ;consistent with 'gnu-build'
-                      #:system system
-                      #:guile-for-build guile
-                      #:allowed-references allowed-references
-                      #:disallowed-references disallowed-references)))
+  (mbegin %store-monad
+    (return builder)))
 
 (define qt-build-system
   (build-system
