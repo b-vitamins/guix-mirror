@@ -38,7 +38,34 @@
             fluidplug-plugin-hash
             fluidplug-plugin-license
 
-            fluidplug-lv2))
+            fluidplug-lv2
+
+            fluidplug-plugin->package
+            fluidplug-airfont320-lv2
+            fluidplug-avl-drumkits-perc-lv2
+            fluidplug-black-pearl-4a-lv2
+            fluidplug-black-pearl-4b-lv2
+            fluidplug-black-pearl-5-lv2
+            fluidplug-red-zeppelin-4-lv2
+            fluidplug-red-zeppelin-5-lv2
+            fluidplug-fluidgm-lv2
+            fluidplug-fluidbass-lv2
+            fluidplug-fluidbrass-lv2
+            fluidplug-fluidchromperc-lv2
+            fluidplug-fluiddrums-lv2
+            fluidplug-fluidensemble-lv2
+            fluidplug-fluidethnic-lv2
+            fluidplug-fluidguitars-lv2
+            fluidplug-fluidorgans-lv2
+            fluidplug-fluidpercussion-lv2
+            fluidplug-fluidpianos-lv2
+            fluidplug-fluidpipes-lv2
+            fluidplug-fluidreeds-lv2
+            fluidplug-fluidsoundfx-lv2
+            fluidplug-fluidstrings-lv2
+            fluidplug-fluidsynthfx-lv2
+            fluidplug-fluidsynthleads-lv2
+            fluidplug-fluidsynthpads-lv2))
 
 (define-record-type* <fluidplug-plugin>
   fluidplug-plugin make-fluidplug-plugin
@@ -328,3 +355,130 @@
       (license
        (delete-duplicates
         (map fluidplug-plugin-license fluidplug-plugins))))))
+
+(define (fluidplug-plugin->package record)
+  (package
+    (inherit fluidplug-lv2)
+    (name (fluidplug-plugin->package-name record))
+    (arguments
+     (substitute-keyword-arguments (package-arguments fluidplug-lv2)
+       ((#:make-flags make-flags)
+        #~(list (string-append "CC=" #$(cc-for-target))
+                (string-append "DESTDIR=" #$output)
+                "PREFIX="))
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (replace 'unpack-plugin
+              (lambda _
+                (symlink #$(fluidplug-plugin->origin record)
+                         #$(fluidplug-plugin->local-path record))))
+            (replace 'build
+              (lambda* (#:key make-flags #:allow-other-keys)
+                (apply invoke `("make" ,@make-flags
+                                #$(fluidplug-plugin-name record)))))
+            (replace 'install
+              (lambda _
+                (let* ((plugin-directory
+                        (string-append #$(fluidplug-plugin-name record)
+                                       ".lv2"))
+                       (lib (string-append #$output "/lib/lv2"))
+                       (share/doc (string-append #$output "/share/doc"))
+                       (plugin-lib (string-append lib "/" plugin-directory)))
+
+                  ;; Install plugin
+                  (for-each
+                   (lambda (f)
+                     (install-file f plugin-lib))
+                   (find-files plugin-directory
+                               "^.*\\.(sf2|so|ttl)$"))
+
+                  ;; Install license
+                  (for-each
+                   (lambda (f)
+                     (install-file f share/doc))
+                   (find-files plugin-directory "(README|License\\.pdf)"))
+
+                  ;; Install UI
+                  (copy-recursively (string-append plugin-directory "/modgui")
+                                    (string-append plugin-lib "/modgui")))))))))
+    (description
+     (string-append (package-description fluidplug-lv2) "
+
+This package provides the @code{" (fluidplug-plugin-name record)
+                    "} LV2 plugin."))
+    (license (fluidplug-plugin-license record))))
+
+(define fluidplug-airfont320-lv2
+  (fluidplug-plugin->package airfont320))
+
+(define fluidplug-avl-drumkits-perc-lv2
+  (fluidplug-plugin->package avl-drumkits-perc))
+
+(define fluidplug-black-pearl-4a-lv2
+  (fluidplug-plugin->package black-pearl-4a))
+
+(define fluidplug-black-pearl-4b-lv2
+  (fluidplug-plugin->package black-pearl-4b))
+
+(define fluidplug-black-pearl-5-lv2
+  (fluidplug-plugin->package black-pearl-5))
+
+(define fluidplug-red-zeppelin-4-lv2
+  (fluidplug-plugin->package red-zeppelin-4))
+
+(define fluidplug-red-zeppelin-5-lv2
+  (fluidplug-plugin->package red-zeppelin-5))
+
+(define fluidplug-fluidgm-lv2
+  (fluidplug-plugin->package fluidgm))
+
+(define fluidplug-fluidbass-lv2
+  (fluidplug-plugin->package fluidbass))
+
+(define fluidplug-fluidbrass-lv2
+  (fluidplug-plugin->package fluidbrass))
+
+(define fluidplug-fluidchromperc-lv2
+  (fluidplug-plugin->package fluidchromperc))
+
+(define fluidplug-fluiddrums-lv2
+  (fluidplug-plugin->package fluiddrums))
+
+(define fluidplug-fluidensemble-lv2
+  (fluidplug-plugin->package fluidensemble))
+
+(define fluidplug-fluidethnic-lv2
+  (fluidplug-plugin->package fluidethnic))
+
+(define fluidplug-fluidguitars-lv2
+  (fluidplug-plugin->package fluidguitars))
+
+(define fluidplug-fluidorgans-lv2
+  (fluidplug-plugin->package fluidorgans))
+
+(define fluidplug-fluidpercussion-lv2
+  (fluidplug-plugin->package fluidpercussion))
+
+(define fluidplug-fluidpianos-lv2
+  (fluidplug-plugin->package fluidpianos))
+
+(define fluidplug-fluidpipes-lv2
+  (fluidplug-plugin->package fluidpipes))
+
+(define fluidplug-fluidreeds-lv2
+  (fluidplug-plugin->package fluidreeds))
+
+(define fluidplug-fluidsoundfx-lv2
+  (fluidplug-plugin->package fluidsoundfx))
+
+(define fluidplug-fluidstrings-lv2
+  (fluidplug-plugin->package fluidstrings))
+
+(define fluidplug-fluidsynthfx-lv2
+  (fluidplug-plugin->package fluidsynthfx))
+
+(define fluidplug-fluidsynthleads-lv2
+  (fluidplug-plugin->package fluidsynthleads))
+
+(define fluidplug-fluidsynthpads-lv2
+  (fluidplug-plugin->package fluidsynthpads))
