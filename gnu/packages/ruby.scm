@@ -6496,13 +6496,13 @@ core tasks.")
 (define-public ruby-git
   (package
     (name "ruby-git")
-    (version "1.3.0")
+    (version "3.0.0")
     (source (origin
               (method url-fetch)
               (uri (rubygems-uri "git" version))
               (sha256
                (base32
-                "1waikaggw7a1d24nw0sh8fd419gbf7awh000qhsf411valycj6q3"))))
+                "0h026bb5j5m86l4gasx462im6in467picr56pixj1nc0fami47lm"))))
     (build-system ruby-build-system)
     (arguments
      `(#:tests? #f ; no tests
