@@ -266,9 +266,8 @@ has strong support for macros.")
                                         ; non-deterministically when run in
                                         ; parallel
     (inputs
-     `(("python" ,python-wrapper)
-       ("xmlto" ,xmlto)))
-    (home-page "https://yasm.tortall.net/")
+     (list python-wrapper xmlto))
+    (home-page "https://github.com/yasm/yasm")
     (synopsis "Rewrite of the NASM assembler")
     (description
      "Yasm is a complete rewrite of the NASM assembler.
