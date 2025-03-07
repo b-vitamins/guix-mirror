@@ -28,7 +28,7 @@
 (define-public re2c
   (package
     (name "re2c")
-    (version "2.2")
+    (version "4.1")
     (source (origin
              (method url-fetch)
              (uri (string-append "https://github.com/skvadrik/" name
@@ -36,7 +36,7 @@
                                  name "-" version ".tar.xz"))
              (sha256
               (base32
-               "1nkbv3bxz1kwwql1pdlnj3lxy5h2vsaif393ivb5b9d8610mxi0g"))))
+               "12rf6879y1iqd4k0f24fykp7praxcmay282yl86z411zvfx9nzfd"))))
     (build-system gnu-build-system)
     (home-page "https://re2c.org/")
     (native-inputs
