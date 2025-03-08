@@ -6,6 +6,7 @@
 ;;; Copyright © 2019 Leo Famulari <leo@famulari.name>
 ;;; Copyright © 2019 Eric Bavier <bavier@member.fsf.org>
 ;;; Copyright © 2023 Maxim Cournoyer <maxim.cournoyer@gmail.com>
+;;; Copyright © 2025 Nicolas Graves <ngraves@ngraves.fr>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -41,11 +42,14 @@
   #:use-module (gnu packages docbook)
   #:use-module (gnu packages flex)
   #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages gettext)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gstreamer)
   #:use-module (gnu packages gtk)
+  #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
+  #:use-module (gnu packages javascript)
   #:use-module (gnu packages libusb)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mp3)
@@ -59,6 +63,7 @@
   #:use-module (gnu packages tls)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
+  #:use-module (gnu packages web)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages xml))
@@ -96,7 +101,7 @@ to remotely control a user's Windows desktop.")
 (define-public freerdp
   (package
     (name "freerdp")
-    (version "2.11.7")
+    (version "3.13.0")
     (source
      (origin
        (method git-fetch)
@@ -105,8 +110,41 @@ to remotely control a user's Windows desktop.")
              (commit version)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0h7yxjnl4zgl07ilh7dzbig8r7phll0wid72hm92jav6s4q75v63"))))
+        (base32 "1hk7sq06myhmdyskf6xfn4g9psck7qxx7dh59mrfhjfsz7bj0i9q"))))
     (build-system cmake-build-system)
+    (arguments
+     (list #:modules '((guix build cmake-build-system)
+                       (guix build gremlin)
+                       (guix build utils))
+           #:build-type "Release"
+           #:configure-flags
+           #~(list "-DWITH_JPEG=ON"
+                   #$@(if (target-x86-64?)
+                          #~("-DWITH_SSE2=ON")
+                          #~())
+                   "-DWITH_KRB5=OFF"
+                   "-DWITH_PULSE=ON"
+                   "-DWITH_CUPS=ON"
+                   "-DBUILD_TESTING=ON"
+                   "-DWITH_SERVER=ON" ;build servers
+                   "-DWITH_SHADOW=ON" ;build shadow server
+                   "-DWITH_LIBSYSTEMD=OFF"
+                   "-DWITH_PROXY=ON")
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-before 'strip 'patch-runpath
+                 (lambda* (#:key inputs #:allow-other-keys)
+                   (for-each
+                    (lambda (file)
+                      (set-file-runpath
+                       file
+                       (list (string-append #$output "/lib")
+                             (dirname (search-input-file
+                                       inputs "/lib/libgcc_s.so"))
+                             (dirname (search-input-file
+                                       inputs "/lib/libfuse3.so.3")))))
+                    (find-files
+                     (string-append #$output "/lib/freerdp3/proxy"))))))))
     (native-inputs
      (list docbook-xml
            docbook-xsl
@@ -118,10 +156,15 @@ to remotely control a user's Windows desktop.")
     (inputs
      (list alsa-lib
            cairo
+           cjson
            cups
            dbus
            ffmpeg-4
+           fuse
+           `(,gcc "lib")
            gsm
+           icu4c
+           json-c
            lame
            libjpeg-turbo
            libusb
@@ -144,19 +187,6 @@ to remotely control a user's Windows desktop.")
            pulseaudio
            zlib))
     (propagated-inputs (list libxkbcommon openssl wayland))
-    (arguments
-     (list #:build-type "RELEASE"
-           #:configure-flags
-           #~(list "-DWITH_JPEG=ON"
-                   #$@(if (target-x86-64?)
-                          #~("-DWITH_SSE2=ON")
-                          #~())
-                   "-DWITH_PULSE=ON"
-                   "-DWITH_CUPS=ON"
-                   "-DBUILD_TESTING=ON"
-                   "-DWITH_SERVER=ON" ;build servers
-                   "-DWITH_SHADOW=ON" ;build shadow server
-                   "-DWITH_PROXY=ON")))
     (home-page "https://www.freerdp.com")
     (synopsis "Remote Desktop Protocol implementation")
     (description "FreeRDP implements Microsoft's Remote Desktop Protocol.
