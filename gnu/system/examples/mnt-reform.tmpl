@@ -1,0 +1,120 @@
+;; This is an operating system configuration template
+;; for a "bare bones" MNT Reform
+
+(use-modules (gnu) (gnu bootloader u-boot))
+(use-service-modules networking)
+(use-package-modules admin bootloaders linux)
+
+(operating-system
+  (host-name "mntreform-guix")
+  (timezone "UTC")
+  (locale "en_US.utf8")
+
+  (bootloader (bootloader-configuration
+               ;; Due to FSDG issues with the DDR training binaries, we cannot
+               ;; currently ship u-boot in guix:
+               ;; https://www.collabora.com/news-and-blog/blog/2024/02/21/almost-a-fully-open-source-boot-chain-for-rockchips-rk3588/
+               ;; Defining an empty bootloader generates an extlinux.conf that
+               ;; nearly any modern u-boot can read.
+	       (bootloader u-boot-bootloader)))
+
+  (file-systems (cons* (file-system
+                         (device (file-system-label "my-root"))
+			 (mount-point "/")
+			 (type "ext4"))
+                       ;; Putting /tmp on a slow SD card is suboptimal. The
+                       ;; rk3588 variant with 32GB of ram has plenty, so use
+                       ;; it for /tmp. Other MNT Reform variants may want to
+                       ;; comment this out.
+		       (file-system
+			 (device "tmpfs")
+			 (mount-point "/tmp")
+			 (type "tmpfs")
+			 (check? #f)
+			 (flags '(no-suid no-dev))
+			 (options "size=50%"))
+                       %base-file-systems))
+
+  ;; Someday, maybe, we can just use linux-libre, but we need some patches and
+  ;; special configuration for now!
+  (kernel linux-libre-arm64-mnt-reform)
+
+  ;; Arguments for MNT Reform2 rk3588, you may need to adapt for other
+  ;; MNT Reform variants
+  (kernel-arguments '("no_console_suspend"
+		      "cryptomgr.notests"
+		      "loglevel=3"
+		      "clk_ignore_unused"
+		      "cma=256M"
+		      "swiotlb=65535"
+		      "console=tty1"))
+
+  ;; FIXME https://issues.guix.gnu.org/48266
+  ;; FIXME this list is probably overly broad, but works.
+  (initrd-modules
+    (list
+     "rfkill"
+     "dm_mod"
+     "rk805_pwrkey"
+     "hantro_vpu"
+     "snd_soc_wm8960"
+     "rockchip_vdec2"
+     "v4l2_vp9"
+     "rockchip_saradc"
+     "v4l2_h264"
+     "v4l2_jpeg"
+     "industrialio_triggered_buffer"
+     "v4l2_mem2mem"
+     "rockchip_thermal"
+     "kfifo_buf"
+     "snd_soc_rockchip_i2s_tdm"
+     "videobuf2_dma_contig"
+     "videobuf2_memops"
+     "videobuf2_v4l2"
+     "panthor"
+     "videodev"
+     "drm_gpuvm"
+     "videobuf2_common"
+     "drm_exec"
+     "snd_soc_audio_graph_card"
+     "mc"
+     "drm_shmem_helper"
+     "gpu_sched"
+     "snd_soc_simple_card_utils"
+     "pci_endpoint_test"
+     "fuse"
+     "ip_tables"
+     "x_tables"
+     "ipv6"
+     "onboard_usb_dev"
+     "dwmac_rk"
+     "stmmac_platform"
+     "stmmac"
+     "crct10dif_ce"
+     "phy_rockchip_naneng_combphy"
+     "phy_rockchip_usbdp"
+     "typec"
+     "rtc_pcf8523"
+     "phy_rockchip_samsung_hdptx"
+     "pcs_xpcs"
+     "nvme"
+     "nvme_core"
+     "rockchipdrm"
+     "analogix_dp"
+     "dw_hdmi_qp"
+     "dw_mipi_dsi"
+
+     ;; Some taken from in %base-initrd-modules a.k.a. default-initrd-modules
+     ;; May not be strictly needed... but you never know.
+     "ahci"
+     "dm-crypt"
+     "xts"
+     ))
+
+  (users (cons* (user-account (name "mntreform")
+                              (group "users")
+                              (supplementary-groups '("wheel")))
+                %base-user-accounts))
+
+  (services (cons* (service dhcp-client-service-type)
+                   %base-services)))
