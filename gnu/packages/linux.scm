@@ -1463,127 +1463,51 @@ Linux kernel.  It has been modified to remove all non-free binary blobs.")
                         ("CONFIG_VHOST_VDPA" . m))
                       (default-extra-linux-options linux-libre-lts-version))))
 
-(define-public linux-libre-mnt-reform-6.12-source
-  (source-with-patches linux-libre-6.12-pristine-source
-                       (append
-                        ;; Patches taken from
-                        ;; https://source.mnt.re/reform/reform-debian-packages/-/tree/278f964619e597bf0b3aae67fef52bb541bc89e6/linux/patches6.12/
-                        (search-patches
-                         "reform/imx8mp-mnt-pocket-reform/2ghz/0001-imx8mp-2ghz-clk.patch"
-                         "reform/imx8mp-mnt-pocket-reform/2ghz/0002-imx8mp-2ghz-opp.patch"
-                         "reform/imx8mp-mnt-pocket-reform/audio/0000-revert-crashy-audiomix-pm-support.patch"
-                         "reform/imx8mp-mnt-pocket-reform/mmc-sdio/0001-sdhci-add-no-sd-uhs-sdr104-devicetree-property.patch"
-                         "reform/imx8mp-mnt-pocket-reform/mmc-sdio/0002-During-the-card-init-the-host-side-sometimes-may-nee.patch"
-                         "reform/imx8mp-mnt-pocket-reform/mmc-sdio/0003-USDHC-IP-has-one-limitation-the-tuning-circuit-can-t.patch"
-                         "reform/imx8mp-mnt-pocket-reform/pocket-panel/0001-v5-add-multi-display-panel-driver.patch"
-                         "reform/imx8mp-mnt-reform2/0001-sn65dsi86-use-hs-clock-of-samsung-dsim-host-directly.patch"
-                         "reform/imx8mp-mnt-reform2/0002-lcdif-dont-exceed-desired-pixel-clock.patch"
-                         "reform/imx8mq-mnt-reform2/0001-nwl-dsi-fixup-mode-only-for-LCDIF-input-not-DCSS.patch"
-                         "reform/imx8mq-mnt-reform2/0002-pci-imx6-add-support-for-internal-refclk-imx8mq.patch"
-                         "reform/imx8mq-mnt-reform2/0003-lcdif-fix-pcie-interference.patch"
-                         "reform/imx8mq-mnt-reform2/0004-mnt4002-imx-gpcv2-wake-smccc.patch.patch"
-                         ;; Does not apply, needs further investigation
-                         ;; "reform/imx8mq-mnt-reform2/v19_20241126_sandor_yu_initial_support_cadence_mhdp8501_hdmi_dp_for_i_mx8mq.mbx"
-                         "reform/ls1028a-mnt-reform2/0000-dtsi-add-hdptx.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-pocket-reform/0001-a311d-viu-fifo-lines-config.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-pocket-reform/0002-a311d-viu-fifo-lines-config-header.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-pocket-reform/0003-tlv320aic31xx-add-1228800hz-support.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0001-Revert-drm-bridge-synopsys-dw-mipi-dsi-enable-EoTp-b.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0011-dw-mipi-dsi-phy-stop-wait-time.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0012-innolux-n125hce-gn1-timing-tweaks.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0013-meson-viu-hold-fifo-lines.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0014-meson-venc-sync.patch.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0015-meson-dw-mipi-dsi-sync-invert.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0016-sn65dsi86-burst-mode-support.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0018-sn65dsi86-never-turn-off.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0020-LOCAL-ALSA-Assign-internal-PCM-chmap-ELD-IEC958-kctl.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0021-HACK-of-partial-revert-of-fdt.c-changes.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0022-add-bt-and-eth-resets.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0023-sdio-pullups.patch"
-                         "reform/meson-g12b-bananapi-cm4-mnt-reform2/0024-sdio-improve-wifi-speed.patch"
-                         "reform/rk3588-mnt-reform2/0001-regulator-Add-of_regulator_get_optional-for-pure-DT-.patch"
-                         "reform/rk3588-mnt-reform2/0001-scripts-package-builddeb-allow-hooks-also-in-usr-sha.patch"
-                         "reform/rk3588-mnt-reform2/0002-regulator-Add-devres-version-of-of_regulator_get_opt.patch"
-                         "reform/rk3588-mnt-reform2/0004-arm64-dts-rockchip-rk3588-rock5b-add-USB-C-support.patch"
-                         "reform/rk3588-mnt-reform2/0005-math.h-add-DIV_ROUND_UP_NO_OVERFLOW.patch"
-                         "reform/rk3588-mnt-reform2/0006-clk-divider-Fix-divisor-masking-on-64-bit-platforms.patch"
-                         "reform/rk3588-mnt-reform2/0007-clk-composite-replace-open-coded-abs_diff.patch"
-                         "reform/rk3588-mnt-reform2/0008-clk-rockchip-support-clocks-registered-late.patch"
-                         "reform/rk3588-mnt-reform2/0009-clk-rockchip-rk3588-register-GATE_LINK-later.patch"
-                         "reform/rk3588-mnt-reform2/0010-clk-rockchip-expose-rockchip_clk_set_lookup.patch"
-                         "reform/rk3588-mnt-reform2/0011-clk-rockchip-implement-linked-gate-clock-support.patch"
-                         "reform/rk3588-mnt-reform2/0012-clk-rockchip-rk3588-drop-RK3588_LINKED_CLK.patch"
-                         "reform/rk3588-mnt-reform2/0013-arm64-dts-rockchip-rk3588-evb1-add-bluetooth-rfkill.patch"
-                         "reform/rk3588-mnt-reform2/0014-arm64-dts-rockchip-rk3588-evb1-improve-PCIe-ethernet.patch"
-                         "reform/rk3588-mnt-reform2/0015-arm64-dts-rockchip-Slow-down-EMMC-a-bit-to-keep-IO-s.patch"
-                         "reform/rk3588-mnt-reform2/0016-vop2-Add-clock-resets-support.patch"
-                         "reform/rk3588-mnt-reform2/0017-arm64-dts-rockchip-Add-VOP-clock-resets-for-rk3588s.patch"
-                         "reform/rk3588-mnt-reform2/0018-dt-bindings-display-vop2-Add-VP-clock-resets.patch"
-                         "reform/rk3588-mnt-reform2/0019-media-v4l2-ctrls-core-Set-frame_mbs_only_flag-by-def.patch"
-                         "reform/rk3588-mnt-reform2/0020-media-rockchip-Move-H264-CABAC-table-to-header-file.patch"
-                         "reform/rk3588-mnt-reform2/0021-media-rockchip-Introduce-the-rkvdec2-driver.patch"
-                         "reform/rk3588-mnt-reform2/0022-media-dt-bindings-rockchip-Document-RK3588-Video-Dec.patch"
-                         "reform/rk3588-mnt-reform2/0023-arm64-dts-rockchip-Add-rkvdec2-Video-Decoder-on-rk35.patch"
-                         "reform/rk3588-mnt-reform2/0024-arm64-defconfig-enable-Rockchip-RK3588-video-decoder.patch"
-                         "reform/rk3588-mnt-reform2/0025-mfd-rk8xx-Fix-shutdown-handler.patch"
-                         "reform/rk3588-mnt-reform2/0026-WIP-phy-phy-rockchip-samsung-hdptx-Add-FRL-EARC-supp.patch"
-                         "reform/rk3588-mnt-reform2/0027-TESTING-phy-phy-rockchip-samsung-hdptx-Add-verbose-l.patch"
-                         "reform/rk3588-mnt-reform2/0028-WIP-dt-bindings-display-rockchip-drm-Add-optional-cl.patch"
-                         "reform/rk3588-mnt-reform2/0029-WIP-drm-rockchip-vop2-Improve-display-modes-handling.patch"
-                         "reform/rk3588-mnt-reform2/0030-arm64-dts-rockchip-Add-HDMI0-bridge-to-rk3588.patch"
-                         "reform/rk3588-mnt-reform2/0031-arm64-dts-rockchip-Enable-HDMI0-on-rock-5b.patch"
-                         "reform/rk3588-mnt-reform2/0032-arm64-dts-rockchip-Enable-HDMI0-on-rk3588-evb1.patch"
-                         "reform/rk3588-mnt-reform2/0033-WIP-arm64-dts-rockchip-Enable-HDMI0-PHY-clk-provider.patch"
-                         "reform/rk3588-mnt-reform2/0034-WIP-arm64-dts-rockchip-Make-use-of-HDMI0-PHY-PLL-on-.patch"
-                         "reform/rk3588-mnt-reform2/0035-WIP-arm64-dts-rockchip-Make-use-of-HDMI0-PHY-PLL-on-.patch"
-                         "reform/rk3588-mnt-reform2/0036-dt-bindings-display-bridge-Add-schema-for-Synopsys-D.patch"
-                         "reform/rk3588-mnt-reform2/0037-dt-bindings-display-rockchip-Add-schema-for-RK3588-H.patch"
-                         "reform/rk3588-mnt-reform2/0038-drm-bridge-synopsys-Add-DW-HDMI-QP-TX-controller-dri.patch"
-                         "reform/rk3588-mnt-reform2/0039-drm-rockchip-Add-basic-RK3588-HDMI-output-support.patch"
-                         "reform/rk3588-mnt-reform2/0040-arm64-defconfig-Enable-Rockchip-extensions-for-Synop.patch"
-                         "reform/rk3588-mnt-reform2/0041-MAINTAINERS-Add-entry-for-Synopsys-DesignWare-HDMI-R.patch"
-                         "reform/rk3588-mnt-reform2/0042-dt-bindings-media-Document-bindings-for-HDMI-RX-Cont.patch"
-                         "reform/rk3588-mnt-reform2/0043-arm64-dts-rockchip-Add-device-tree-support-for-HDMI-.patch"
-                         "reform/rk3588-mnt-reform2/0044-media-platform-synopsys-Add-support-for-HDMI-input-d.patch"
-                         "reform/rk3588-mnt-reform2/0045-arm64-defconfig-Enable-Synopsys-HDMI-receiver.patch"
-                         "reform/rk3588-mnt-reform2/0046-arm64-dts-rockchip-Enable-HDMI-receiver-on-rock-5b.patch"
-                         "reform/rk3588-mnt-reform2/0047-arm64-dts-rockchip-Enable-HDMI-receiver-on-RK3588-EV.patch"
-                         "reform/rk3588-mnt-reform2/0048-arm64-defconfig-Enable-default-EDID-for-Synopsys-HDM.patch"
-                         "reform/rk3588-mnt-reform2/0049-regulator-Add-devm_-of_regulator_get.patch"
-                         "reform/rk3588-mnt-reform2/0050-pmdomain-rockchip-cleanup-mutex-handling-in-rockchip.patch"
-                         "reform/rk3588-mnt-reform2/0051-pmdomain-rockchip-forward-rockchip_do_pmu_set_power_.patch"
-                         "reform/rk3588-mnt-reform2/0052-pmdomain-rockchip-reduce-indentation-in-rockchip_pd_.patch"
-                         "reform/rk3588-mnt-reform2/0053-dt-bindings-power-rockchip-add-regulator-support.patch"
-                         "reform/rk3588-mnt-reform2/0054-pmdomain-rockchip-add-regulator-support.patch"
-                         "reform/rk3588-mnt-reform2/0055-arm64-dts-rockchip-Add-GPU-power-domain-regulator-de.patch"
-                         "reform/rk3588-mnt-reform2/0056-dt-bindings-net-wireless-brcm4329-fmac-add-pci14e4-4.patch"
-                         "reform/rk3588-mnt-reform2/0057-dt-bindings-net-wireless-brcm4329-fmac-add-clock-des.patch"
-                         "reform/rk3588-mnt-reform2/0058-wifi-brcmfmac-Add-optional-lpo-clock-enable-support.patch"
-                         ;; does not apply cleanly due to DEBLOBBING
-                         ;; "reform/rk3588-mnt-reform2/0059-wifi-brcmfmac-add-flag-for-random-seed-during-firmwa.patch"
-                         "reform/rk3588-mnt-reform2/0060-arm64-dts-rockchip-rk3588-evb1-add-WLAN-controller.patch"
-                         "reform/rk3588-mnt-reform2/0061-arm64-dts-rockchip-add-and-enable-gpu-node-for-Radxa.patch"
-                         "reform/rk3588-mnt-reform2/0062-arm64-dts-rockchip-Enable-HDMI0-on-rock-5a.patch"
-                         "reform/rk3588-mnt-reform2/0100-rk3588-dtsi-add-hdmi1-controller.patch"
-                         "reform/rk3588-mnt-reform2/0102-drm-panthor-Actually-suspend-IRQs-in-the-unplug-path.patch"
-                         "reform/rk3588-mnt-reform2/3001-display-rockchip-add-schema-for-rk3588-hdmi-tx.patch"
-                         "reform/rk3588-mnt-reform2/4000-mnt-rk3588-dual-hdmi-qp-rockchip.patch"
-                         "reform/rk3588-mnt-reform2/4001-mnt-rk3588-dual-hdmi-vop2-pll.patch"
-                         "reform/rk3588-mnt-reform2/5001-rk3588-dsi2-driver.patch"
-                         "reform/rk3588-mnt-reform2/5002-rk3588-dsi-dts-nodes.patch"
-                         "reform/rk3588-mnt-reform2/5100-modernize-hdmi1-in-dtsi.patch"
-                         "reform/rk3588-mnt-reform2/5110-hdptx-crash-workaround.patch"
-                         "reform/rk3588-mnt-reform2/5200-drm-rockchip-Set-dma-mask-to-64-bit.patch"
-                         "reform/dts.patch")
-                        (list %boot-logo-patch
-                              %linux-libre-arm-export-__sync_icache_dcache-patch))))
+(define-public reform-debian-packages
+  (package
+    (name "reform-debian-packages")
+    (version "278f964619e597bf0b3aae67fef52bb541bc89e6")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://source.mnt.re/reform/reform-debian-packages.git")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "19phz43ar2p9w0rq2pgzjx8zbxy2hppjbprvw95dvbkm8a20gv5v"))))
+    (build-system copy-build-system)
+    (arguments
+     (list ;; #:tests? #f                  ; no tests
+           #:install-plan
+           #~'(("linux/patches6.12/" "/patches")
+               ("linux/" "/dts" #:include-regexp ("\\.dts$"))
+               ("linux/config" "config")
+             )))
+    (home-page "https://source.mnt.re/reform/reform-debian-packages")
+    (synopsis "Linux kernel patches and device-trees used for MNT Reform systems")
+    (description
+     "Linux kernel patches and device-trees used for the MNT Reform systems")
+    
+    ;; FSFAP GPL-2.0 GPL-2.0+ GPL-2.0-only (GPL-2.0-only OR BSD-2-Clause)
+    ;; GPL-2.0-only OR BSD-2-Clause (GPL-2.0 OR BSD-2-Clause) GPL-2.0-or-later
+    ;; GPL-2.0 or MIT (GPL-2.0+ OR MIT) (GPL-3.0 OR BSD-2-Clause) MIT
+    (license
+     (list
+      license:bsd-2
+      license:gpl2
+      license:gpl2+
+      license:gpl3
+      ;; license:mit
+      ;; license:FSFAP
+      ))))
 
 (define-public linux-libre-arm64-mnt-reform
   ;; Kernel for use on the MNT/Reform laptops
   ;; https://mntre.com/reform.html
-  (make-linux-libre* linux-libre-6.12-version
+  (let ((base (make-linux-libre* linux-libre-6.12-version
                      linux-libre-6.12-gnu-revision
-                     linux-libre-mnt-reform-6.12-source
+                     linux-libre-6.12-source
                      '("aarch64-linux")
                      #:extra-version "arm64-mnt-reform"
                      #:extra-options
@@ -1670,7 +1594,191 @@ Linux kernel.  It has been modified to remove all non-free binary blobs.")
                         ("CONFIG_VIDEO_ROCKCHIP_VDEC2" . m)
                         ("CONFIG_ROCKCHIP_DW_HDMI_QP" . #true)
                         ("CONFIG_ROCKCHIP_DW_MIPI_DSI" . #true))
-                      (default-extra-linux-options linux-libre-6.12-version))))
+                      (default-extra-linux-options linux-libre-6.12-version)))))
+    (package
+      (inherit base)
+      (inputs (list reform-debian-packages))
+      (arguments
+       (substitute-keyword-arguments
+           (package-arguments base)
+         ((#:phases phases)
+          #~(modify-phases #$phases
+              (add-after 'unpack 'apply-reform-patches
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (for-each (lambda (patch)
+                              (invoke "patch" "-p1" "--force" "-i"
+                                      (search-input-file
+                                       inputs
+                                       (string-append "patches/" patch))))
+                            (list
+                             "imx8mp-mnt-pocket-reform/2ghz/0001-imx8mp-2ghz-clk.patch"
+                             "imx8mp-mnt-pocket-reform/2ghz/0002-imx8mp-2ghz-opp.patch"
+                             "imx8mp-mnt-pocket-reform/audio/0000-revert-crashy-audiomix-pm-support.patch"
+                             "imx8mp-mnt-pocket-reform/mmc-sdio/0001-sdhci-add-no-sd-uhs-sdr104-devicetree-property.patch"
+                             "imx8mp-mnt-pocket-reform/mmc-sdio/0002-During-the-card-init-the-host-side-sometimes-may-nee.patch"
+                             "imx8mp-mnt-pocket-reform/mmc-sdio/0003-USDHC-IP-has-one-limitation-the-tuning-circuit-can-t.patch"
+                             "imx8mp-mnt-pocket-reform/pocket-panel/0001-v5-add-multi-display-panel-driver.patch"
+                             "imx8mp-mnt-reform2/0001-sn65dsi86-use-hs-clock-of-samsung-dsim-host-directly.patch"
+                             "imx8mp-mnt-reform2/0002-lcdif-dont-exceed-desired-pixel-clock.patch"
+                             "imx8mq-mnt-reform2/0001-nwl-dsi-fixup-mode-only-for-LCDIF-input-not-DCSS.patch"
+                             "imx8mq-mnt-reform2/0002-pci-imx6-add-support-for-internal-refclk-imx8mq.patch"
+                             "imx8mq-mnt-reform2/0003-lcdif-fix-pcie-interference.patch"
+                             "imx8mq-mnt-reform2/0004-mnt4002-imx-gpcv2-wake-smccc.patch.patch"
+                             ;; Does not apply, needs further investigation
+                             ;; "imx8mq-mnt-reform2/v19_20241126_sandor_yu_initial_support_cadence_mhdp8501_hdmi_dp_for_i_mx8mq.mbx"
+                             "ls1028a-mnt-reform2/0000-dtsi-add-hdptx.patch"
+                             "meson-g12b-bananapi-cm4-mnt-pocket-reform/0001-a311d-viu-fifo-lines-config.patch"
+                             "meson-g12b-bananapi-cm4-mnt-pocket-reform/0002-a311d-viu-fifo-lines-config-header.patch"
+                             "meson-g12b-bananapi-cm4-mnt-pocket-reform/0003-tlv320aic31xx-add-1228800hz-support.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0001-Revert-drm-bridge-synopsys-dw-mipi-dsi-enable-EoTp-b.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0011-dw-mipi-dsi-phy-stop-wait-time.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0012-innolux-n125hce-gn1-timing-tweaks.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0013-meson-viu-hold-fifo-lines.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0014-meson-venc-sync.patch.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0015-meson-dw-mipi-dsi-sync-invert.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0016-sn65dsi86-burst-mode-support.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0018-sn65dsi86-never-turn-off.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0020-LOCAL-ALSA-Assign-internal-PCM-chmap-ELD-IEC958-kctl.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0021-HACK-of-partial-revert-of-fdt.c-changes.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0022-add-bt-and-eth-resets.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0023-sdio-pullups.patch"
+                             "meson-g12b-bananapi-cm4-mnt-reform2/0024-sdio-improve-wifi-speed.patch"
+                             "rk3588-mnt-reform2/0001-regulator-Add-of_regulator_get_optional-for-pure-DT-.patch"
+                             "rk3588-mnt-reform2/0001-scripts-package-builddeb-allow-hooks-also-in-usr-sha.patch"
+                             "rk3588-mnt-reform2/0002-regulator-Add-devres-version-of-of_regulator_get_opt.patch"
+                             "rk3588-mnt-reform2/0004-arm64-dts-rockchip-rk3588-rock5b-add-USB-C-support.patch"
+                             "rk3588-mnt-reform2/0005-math.h-add-DIV_ROUND_UP_NO_OVERFLOW.patch"
+                             "rk3588-mnt-reform2/0006-clk-divider-Fix-divisor-masking-on-64-bit-platforms.patch"
+                             "rk3588-mnt-reform2/0007-clk-composite-replace-open-coded-abs_diff.patch"
+                             "rk3588-mnt-reform2/0008-clk-rockchip-support-clocks-registered-late.patch"
+                             "rk3588-mnt-reform2/0009-clk-rockchip-rk3588-register-GATE_LINK-later.patch"
+                             "rk3588-mnt-reform2/0010-clk-rockchip-expose-rockchip_clk_set_lookup.patch"
+                             "rk3588-mnt-reform2/0011-clk-rockchip-implement-linked-gate-clock-support.patch"
+                             "rk3588-mnt-reform2/0012-clk-rockchip-rk3588-drop-RK3588_LINKED_CLK.patch"
+                             "rk3588-mnt-reform2/0013-arm64-dts-rockchip-rk3588-evb1-add-bluetooth-rfkill.patch"
+                             "rk3588-mnt-reform2/0014-arm64-dts-rockchip-rk3588-evb1-improve-PCIe-ethernet.patch"
+                             "rk3588-mnt-reform2/0015-arm64-dts-rockchip-Slow-down-EMMC-a-bit-to-keep-IO-s.patch"
+                             "rk3588-mnt-reform2/0016-vop2-Add-clock-resets-support.patch"
+                             "rk3588-mnt-reform2/0017-arm64-dts-rockchip-Add-VOP-clock-resets-for-rk3588s.patch"
+                             "rk3588-mnt-reform2/0018-dt-bindings-display-vop2-Add-VP-clock-resets.patch"
+                             "rk3588-mnt-reform2/0019-media-v4l2-ctrls-core-Set-frame_mbs_only_flag-by-def.patch"
+                             "rk3588-mnt-reform2/0020-media-rockchip-Move-H264-CABAC-table-to-header-file.patch"
+                             "rk3588-mnt-reform2/0021-media-rockchip-Introduce-the-rkvdec2-driver.patch"
+                             "rk3588-mnt-reform2/0022-media-dt-bindings-rockchip-Document-RK3588-Video-Dec.patch"
+                             "rk3588-mnt-reform2/0023-arm64-dts-rockchip-Add-rkvdec2-Video-Decoder-on-rk35.patch"
+                             "rk3588-mnt-reform2/0024-arm64-defconfig-enable-Rockchip-RK3588-video-decoder.patch"
+                             "rk3588-mnt-reform2/0025-mfd-rk8xx-Fix-shutdown-handler.patch"
+                             "rk3588-mnt-reform2/0026-WIP-phy-phy-rockchip-samsung-hdptx-Add-FRL-EARC-supp.patch"
+                             "rk3588-mnt-reform2/0027-TESTING-phy-phy-rockchip-samsung-hdptx-Add-verbose-l.patch"
+                             "rk3588-mnt-reform2/0028-WIP-dt-bindings-display-rockchip-drm-Add-optional-cl.patch"
+                             "rk3588-mnt-reform2/0029-WIP-drm-rockchip-vop2-Improve-display-modes-handling.patch"
+                             "rk3588-mnt-reform2/0030-arm64-dts-rockchip-Add-HDMI0-bridge-to-rk3588.patch"
+                             "rk3588-mnt-reform2/0031-arm64-dts-rockchip-Enable-HDMI0-on-rock-5b.patch"
+                             "rk3588-mnt-reform2/0032-arm64-dts-rockchip-Enable-HDMI0-on-rk3588-evb1.patch"
+                             "rk3588-mnt-reform2/0033-WIP-arm64-dts-rockchip-Enable-HDMI0-PHY-clk-provider.patch"
+                             "rk3588-mnt-reform2/0034-WIP-arm64-dts-rockchip-Make-use-of-HDMI0-PHY-PLL-on-.patch"
+                             "rk3588-mnt-reform2/0035-WIP-arm64-dts-rockchip-Make-use-of-HDMI0-PHY-PLL-on-.patch"
+                             "rk3588-mnt-reform2/0036-dt-bindings-display-bridge-Add-schema-for-Synopsys-D.patch"
+                             "rk3588-mnt-reform2/0037-dt-bindings-display-rockchip-Add-schema-for-RK3588-H.patch"
+                             "rk3588-mnt-reform2/0038-drm-bridge-synopsys-Add-DW-HDMI-QP-TX-controller-dri.patch"
+                             "rk3588-mnt-reform2/0039-drm-rockchip-Add-basic-RK3588-HDMI-output-support.patch"
+                             "rk3588-mnt-reform2/0040-arm64-defconfig-Enable-Rockchip-extensions-for-Synop.patch"
+                             "rk3588-mnt-reform2/0041-MAINTAINERS-Add-entry-for-Synopsys-DesignWare-HDMI-R.patch"
+                             "rk3588-mnt-reform2/0042-dt-bindings-media-Document-bindings-for-HDMI-RX-Cont.patch"
+                             "rk3588-mnt-reform2/0043-arm64-dts-rockchip-Add-device-tree-support-for-HDMI-.patch"
+                             "rk3588-mnt-reform2/0044-media-platform-synopsys-Add-support-for-HDMI-input-d.patch"
+                             "rk3588-mnt-reform2/0045-arm64-defconfig-Enable-Synopsys-HDMI-receiver.patch"
+                             "rk3588-mnt-reform2/0046-arm64-dts-rockchip-Enable-HDMI-receiver-on-rock-5b.patch"
+                             "rk3588-mnt-reform2/0047-arm64-dts-rockchip-Enable-HDMI-receiver-on-RK3588-EV.patch"
+                             "rk3588-mnt-reform2/0048-arm64-defconfig-Enable-default-EDID-for-Synopsys-HDM.patch"
+                             "rk3588-mnt-reform2/0049-regulator-Add-devm_-of_regulator_get.patch"
+                             "rk3588-mnt-reform2/0050-pmdomain-rockchip-cleanup-mutex-handling-in-rockchip.patch"
+                             "rk3588-mnt-reform2/0051-pmdomain-rockchip-forward-rockchip_do_pmu_set_power_.patch"
+                             "rk3588-mnt-reform2/0052-pmdomain-rockchip-reduce-indentation-in-rockchip_pd_.patch"
+                             "rk3588-mnt-reform2/0053-dt-bindings-power-rockchip-add-regulator-support.patch"
+                             "rk3588-mnt-reform2/0054-pmdomain-rockchip-add-regulator-support.patch"
+                             "rk3588-mnt-reform2/0055-arm64-dts-rockchip-Add-GPU-power-domain-regulator-de.patch"
+                             "rk3588-mnt-reform2/0056-dt-bindings-net-wireless-brcm4329-fmac-add-pci14e4-4.patch"
+                             "rk3588-mnt-reform2/0057-dt-bindings-net-wireless-brcm4329-fmac-add-clock-des.patch"
+                             "rk3588-mnt-reform2/0058-wifi-brcmfmac-Add-optional-lpo-clock-enable-support.patch"
+                             ;; does not apply cleanly due to DEBLOBBING
+                             ;; "rk3588-mnt-reform2/0059-wifi-brcmfmac-add-flag-for-random-seed-during-firmwa.patch"
+                             "rk3588-mnt-reform2/0060-arm64-dts-rockchip-rk3588-evb1-add-WLAN-controller.patch"
+                             "rk3588-mnt-reform2/0061-arm64-dts-rockchip-add-and-enable-gpu-node-for-Radxa.patch"
+                             "rk3588-mnt-reform2/0062-arm64-dts-rockchip-Enable-HDMI0-on-rock-5a.patch"
+                             "rk3588-mnt-reform2/0100-rk3588-dtsi-add-hdmi1-controller.patch"
+                             "rk3588-mnt-reform2/0102-drm-panthor-Actually-suspend-IRQs-in-the-unplug-path.patch"
+                             "rk3588-mnt-reform2/3001-display-rockchip-add-schema-for-rk3588-hdmi-tx.patch"
+                             "rk3588-mnt-reform2/4000-mnt-rk3588-dual-hdmi-qp-rockchip.patch"
+                             "rk3588-mnt-reform2/4001-mnt-rk3588-dual-hdmi-vop2-pll.patch"
+                             "rk3588-mnt-reform2/5001-rk3588-dsi2-driver.patch"
+                             "rk3588-mnt-reform2/5002-rk3588-dsi-dts-nodes.patch"
+                             "rk3588-mnt-reform2/5100-modernize-hdmi1-in-dtsi.patch"
+                             "rk3588-mnt-reform2/5110-hdptx-crash-workaround.patch"
+                             "rk3588-mnt-reform2/5200-drm-rockchip-Set-dma-mask-to-64-bit.patch"))))
+              ;; FIXME consolidate copy-*-dts-files phases
+              (add-after 'unpack 'copy-rockchip-dts-files
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (for-each (lambda (dts)
+                              (copy-file
+                               (search-input-file
+                                inputs
+                                (string-append "/dts/" dts))
+                                (string-append "arch/arm64/boot/dts/rockchip/" dts)))
+                            (list
+                             "rk3588-mnt-reform2.dts"
+                             "rk3588-mnt-pocket-reform.dts"
+                             "rk3588-mnt-reform-next.dts"
+                             ))))
+              (add-after 'unpack 'copy-freescale-dts-files
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (for-each (lambda (dts)
+                              (copy-file
+                               (search-input-file
+                                inputs
+                                (string-append "/dts/" dts))
+                                (string-append "arch/arm64/boot/dts/freescale/" dts)))
+                            (list
+                             "fsl-ls1028a-mnt-reform2.dts"
+                             "imx8mq-mnt-reform2-hdmi.dts"
+                             "imx8mp-mnt-pocket-reform.dts"
+                             "imx8mq-mnt-reform2.dts"
+                             "imx8mp-mnt-reform2.dts"
+                             ))))
+              (add-after 'unpack 'copy-amlogic-dts-files
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (for-each (lambda (dts)
+                              (copy-file
+                               (search-input-file
+                                inputs
+                                (string-append "/dts/" dts))
+                                (string-append "arch/arm64/boot/dts/amlogic/" dts)))
+                            (list
+                             "meson-g12b-bananapi-cm4-mnt-pocket-reform.dts"
+                             "meson-g12b-bananapi-cm4-mnt-reform2.dts"
+                             ))))
+              (add-after 'unpack 'adjust-makefiles-with-new-dtb
+                (lambda _
+                  (substitute* "arch/arm64/boot/dts/amlogic/Makefile"
+                    (("meson-g12b-bananapi-cm4-mnt-reform2.dtb")
+                     "meson-g12b-bananapi-cm4-mnt-reform2.dtb
+dtb-$(CONFIG_ARCH_MESON) += meson-g12b-bananapi-cm4-mnt-pocket-reform.dtb"))
+                  (substitute* "arch/arm64/boot/dts/freescale/Makefile"
+                    (("fsl-ls1028a-rdb.dtb")
+                     "fsl-ls1028a-rdb.dtb
+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-mnt-reform2.dtb"))
+                  (substitute* "arch/arm64/boot/dts/freescale/Makefile"
+                    (("imx8mq-mnt-reform2.dtb")
+                      "imx8mq-mnt-reform2.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx8mp-mnt-reform2.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx8mp-mnt-pocket-reform.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx8mq-mnt-reform2-hdmi.dtb"))
+                  (substitute* "arch/arm64/boot/dts/rockchip/Makefile"
+                    (("rk3588-rock-5b.dtb")
+                     "rk3588-rock-5b.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-mnt-reform2.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-mnt-reform-next.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-mnt-pocket-reform.dtb")))))))))))
 
 (define-public linux-libre-riscv64-generic
   (make-linux-libre* linux-libre-version
