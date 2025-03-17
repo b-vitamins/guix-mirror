@@ -1716,47 +1716,37 @@ Linux kernel.  It has been modified to remove all non-free binary blobs.")
                              "rk3588-mnt-reform2/5100-modernize-hdmi1-in-dtsi.patch"
                              "rk3588-mnt-reform2/5110-hdptx-crash-workaround.patch"
                              "rk3588-mnt-reform2/5200-drm-rockchip-Set-dma-mask-to-64-bit.patch"))))
-              ;; FIXME consolidate copy-*-dts-files phases
-              (add-after 'unpack 'copy-rockchip-dts-files
-                (lambda* (#:key inputs #:allow-other-keys)
-                  (for-each (lambda (dts)
-                              (copy-file
-                               (search-input-file
-                                inputs
-                                (string-append "/dts/" dts))
-                                (string-append "arch/arm64/boot/dts/rockchip/" dts)))
-                            (list
-                             "rk3588-mnt-reform2.dts"
-                             "rk3588-mnt-pocket-reform.dts"
-                             "rk3588-mnt-reform-next.dts"
-                             ))))
-              (add-after 'unpack 'copy-freescale-dts-files
-                (lambda* (#:key inputs #:allow-other-keys)
-                  (for-each (lambda (dts)
-                              (copy-file
-                               (search-input-file
-                                inputs
-                                (string-append "/dts/" dts))
-                                (string-append "arch/arm64/boot/dts/freescale/" dts)))
-                            (list
-                             "fsl-ls1028a-mnt-reform2.dts"
-                             "imx8mq-mnt-reform2-hdmi.dts"
-                             "imx8mp-mnt-pocket-reform.dts"
-                             "imx8mq-mnt-reform2.dts"
-                             "imx8mp-mnt-reform2.dts"
-                             ))))
-              (add-after 'unpack 'copy-amlogic-dts-files
-                (lambda* (#:key inputs #:allow-other-keys)
-                  (for-each (lambda (dts)
-                              (copy-file
-                               (search-input-file
-                                inputs
-                                (string-append "/dts/" dts))
-                                (string-append "arch/arm64/boot/dts/amlogic/" dts)))
-                            (list
-                             "meson-g12b-bananapi-cm4-mnt-pocket-reform.dts"
-                             "meson-g12b-bananapi-cm4-mnt-reform2.dts"
-                             ))))
+              ;; FIXME do not needlessly copy all dts files into all directories
+              (add-after 'unpack 'copy-reform-dts-files
+			 (lambda* (#:key inputs #:allow-other-keys)
+				  (for-each (lambda (dts)
+					      (for-each (lambda (subarch)
+							  (copy-file
+							   (search-input-file
+							    inputs
+							    (string-append "/dts/" dts))
+							   (string-append (string-append "arch/arm64/boot/dts/" subarch) dts)))
+							(list
+							 "rockchip/"
+							 "freescale/"
+							 "amlogic/"
+							 )))
+
+					    (list
+					     ;; rockchip
+					     "rk3588-mnt-reform2.dts"
+					     "rk3588-mnt-pocket-reform.dts"
+					     "rk3588-mnt-reform-next.dts"
+					     ;; freescale
+					     "fsl-ls1028a-mnt-reform2.dts"
+					     "imx8mq-mnt-reform2-hdmi.dts"
+					     "imx8mp-mnt-pocket-reform.dts"
+					     "imx8mq-mnt-reform2.dts"
+					     "imx8mp-mnt-reform2.dts"
+					     ;; amlogic
+					     "meson-g12b-bananapi-cm4-mnt-pocket-reform.dts"
+					     "meson-g12b-bananapi-cm4-mnt-reform2.dts"
+					     ))))
               (add-after 'unpack 'adjust-makefiles-with-new-dtb
                 (lambda _
                   (substitute* "arch/arm64/boot/dts/amlogic/Makefile"
