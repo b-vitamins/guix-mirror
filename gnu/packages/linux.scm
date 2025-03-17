@@ -1717,7 +1717,7 @@ Linux kernel.  It has been modified to remove all non-free binary blobs.")
                              "rk3588-mnt-reform2/5110-hdptx-crash-workaround.patch"
                              "rk3588-mnt-reform2/5200-drm-rockchip-Set-dma-mask-to-64-bit.patch"))))
               ;; FIXME do not needlessly copy all dts files into all directories
-              (add-after 'unpack 'copy-reform-dts-files
+              (add-after 'apply-reform-patches 'copy-reform-dts-files
 			 (lambda* (#:key inputs #:allow-other-keys)
 				  (for-each (lambda (dts)
 					      (for-each (lambda (subarch)
@@ -1747,7 +1747,7 @@ Linux kernel.  It has been modified to remove all non-free binary blobs.")
 					     "meson-g12b-bananapi-cm4-mnt-pocket-reform.dts"
 					     "meson-g12b-bananapi-cm4-mnt-reform2.dts"
 					     ))))
-              (add-after 'unpack 'adjust-makefiles-with-new-dtb
+              (add-after 'apply-reform-patches 'adjust-makefiles-with-new-dtb
                 (lambda _
                   (substitute* "arch/arm64/boot/dts/amlogic/Makefile"
                     (("meson-g12b-bananapi-cm4-mnt-reform2.dtb")
