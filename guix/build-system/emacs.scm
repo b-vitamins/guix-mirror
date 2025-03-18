@@ -93,9 +93,8 @@
                       (system (%current-system))
                       (guile #f)
                       (imported-modules %emacs-build-system-modules)
-                      (modules '((guix build emacs-build-system)
-                                 (guix build utils)
-                                 (guix build emacs-utils))))
+                      allowed-references
+                      disallowed-references)
   "Build SOURCE using EMACS, and with INPUTS."
   (define builder
     (with-imported-modules imported-modules
@@ -126,6 +125,9 @@
   (build-system
     (name 'emacs)
     (description "The build system for Emacs packages")
+    (modules '((guix build emacs-build-system)
+               (guix build utils)
+               (guix build emacs-utils)))
     (lower lower)))
 
 ;;; emacs.scm ends here
