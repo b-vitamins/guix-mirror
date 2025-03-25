@@ -209,14 +209,48 @@
   (server-arguments xorg-configuration-server-arguments ;list of strings
                     (default %default-xorg-server-arguments)))
 
+(define merge-xorg-configurations
+  (case-lambda*
+   (() (xorg-configuration))
+   ((a) a)
+   ((#:rest configs)
+    (let ((configs (reverse configs)))         ; Prefer later configurations.
+      (xorg-configuration
+       (modules
+        (append-map xorg-configuration-modules configs))
+       (fonts
+        (append-map xorg-configuration-fonts configs))
+       (drivers
+        (append-map xorg-configuration-drivers configs))
+       (resolutions
+        (append-map xorg-configuration-resolutions configs))
+       (extra-config (append-map xorg-configuration-extra-config configs))
+       ;; Prefer the more recently set layout.
+       (keyboard-layout (find xorg-configuration-keyboard-layout configs))
+
+       (server
+        ;; Prefer the last non-default server.
+        (or
+         (find (lambda (config) (not (eq? xorg-server server)))
+               (map xorg-configuration-server configs))
+         xorg-server))
+
+       (server-arguments
+        ;; Prefer the last non-default arguments.
+        (or
+         (find (lambda (config) (not (eq? %default-xorg-server-arguments server)))
+               (map xorg-configuration-server-arguments configs))
+         %default-xorg-server-arguments)))))))
+
 (define (xorg-configuration->file config)
   "Compute an Xorg configuration file corresponding to CONFIG, an
 <xorg-configuration> record."
   (let ((xorg-server (xorg-configuration-server config)))
     (define all-modules
       ;; 'xorg-server' provides 'fbdevhw.so' etc.
-      (append (xorg-configuration-modules config)
-              (list xorg-server)))
+      (delete-duplicates
+       (append (xorg-configuration-modules config)
+               (list xorg-server))))
 
     (define build
       #~(begin
@@ -227,7 +261,7 @@
           (call-with-output-file #$output
             (lambda (port)
               (define drivers
-                '#$(xorg-configuration-drivers config))
+                (delete-duplicates '#$(xorg-configuration-drivers config)))
 
               (define (device-section driver)
                 (string-append "
@@ -247,7 +281,7 @@ Section \"Screen\"
                       ((x y)
                        (string-append "\"" (number->string x)
                                       "x" (number->string y) "\"")))
-                    resolutions)) "
+                    (delete-duplicates resolutions))) "
   EndSubSection
 EndSection"))
 
@@ -294,7 +328,7 @@ EndSection\n"))
               (display "Section \"Files\"\n" port)
               (for-each (lambda (font)
                           (format port "  FontPath \"~a\"~%" font))
-                        '#$(xorg-configuration-fonts config))
+                        (delete-duplicates '#$(xorg-configuration-fonts config)))
               (for-each (lambda (module)
                           (format port
                                   "  ModulePath \"~a\"~%"
@@ -315,7 +349,7 @@ EndSection\n" port)
               (newline port)
               (display (string-join
                         (map (cut screen-section <>
-                                  '#$(xorg-configuration-resolutions config))
+                                  (delete-duplicates '#$(xorg-configuration-resolutions config)))
                              drivers)
                         "\n")
                        port)
@@ -334,9 +368,12 @@ EndSection\n" port)
                            port)
                   (newline port)))
 
-              (for-each (lambda (config)
-                          (display config port))
-                        '#$(xorg-configuration-extra-config config))))))
+              (for-each
+               (lambda (config)
+                 (display config port)
+                 (newline port))
+               (delete-duplicates
+                '#$(xorg-configuration-extra-config config)))))))
 
     (computed-file "xserver.conf" build)))
 
@@ -628,10 +665,7 @@ a `service-extension', as used by `set-xorg-configuration'."
     ((_ configuration-record service-type-definition)
      (service-type
        (inherit service-type-definition)
-       (compose (lambda (extensions)
-                  (match extensions
-                    (() #f)
-                    ((config . _) config))))
+       (compose (cut reduce merge-xorg-configurations #f <>))
        (extend (lambda (config xorg-configuration)
                  (if xorg-configuration
                      (configuration-record
