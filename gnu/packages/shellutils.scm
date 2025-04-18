@@ -672,7 +672,27 @@ between various shells or commands.")
                    (replace 'check
                      (lambda* (#:key tests? #:allow-other-keys)
                        (when tests?
-                         (invoke "pytest")))))))
+                         (invoke "pytest"))))
+                   (add-after 'wrap 'install-completions
+                     (lambda _
+                       (for-each
+                        (lambda (binary)
+                          (for-each
+                           ((@ (ice-9 match) match-lambda)
+                            ((shell . path)
+                             (mkdir-p (string-append #$output (dirname path)))
+                             (with-output-to-file
+                                 (string-append
+                                  #$output (format #f path (basename binary)))
+                               (lambda _
+                                 (invoke binary "--print-completion" shell)))))
+                           '(("bash" . "/share/bash-completion/completions/~a")
+                             ("zsh" . "/share/zsh/site-functions/_~a")
+                             ("tcsh" . "/etc/profile.d/~a.completion.csh"))))
+                        (find-files
+                         (string-append #$output "/bin/")
+                         (lambda (file stat)
+                           (not (string-suffix? "-real" file))))))))))
     (native-inputs (list python-flexmock
                          python-mock
                          python-parameterized
