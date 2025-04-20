@@ -205,6 +205,7 @@
             seatd-configuration
             seatd-service-type
 
+            desktop-services-for-system
             %desktop-services))
 
 ;;; Commentary:

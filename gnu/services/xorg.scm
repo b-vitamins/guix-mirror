@@ -16,6 +16,7 @@
 ;;; Copyright © 2023 muradm <mail@muradm.net>
 ;;; Copyright © 2024 Zheng Junjie <873216071@qq.com>
 ;;; Copyright © 2024 Tomas Volf <~@wolfsden.cz>
+;;; Copyright © 2025 Ian Eure <ian@retrospec.tv>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -43,6 +44,7 @@
   #:use-module (gnu system privilege)
   #:use-module (gnu services base)
   #:use-module (gnu services dbus)
+  #:use-module (gnu services desktop)
   #:use-module (gnu packages base)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages xorg)
@@ -139,6 +141,7 @@
             gdm-configuration
             gdm-service-type
 
+            xorg-configuration-service-type
             handle-xorg-configuration
             set-xorg-configuration))
 
@@ -1397,16 +1400,23 @@ polkit.addRule(function(action, subject) {
                    "Run the GNOME Desktop Manager (GDM), a program that allows
 you to log in in a graphical session, whether or not you use GNOME."))))
 
-;; Since GDM depends on Rust and Rust is not available on all platforms,
-;; use SDDM as the fall-back display manager.
-;; TODO: Switch the condition to take into account if Rust is supported and
-;; match the configuration in desktop-services-for-system.
+(define (xorg-configuration-service? service)
+  "Returns #t if @var{s} is a service carrying xorg configuration."
+  (let ((val (service-value service)))
+    (and (record? val)
+         (memq 'xorg-configuration
+                 (record-type-fields (record-type-descriptor val))))))
+
+(define (xorg-configuration-service-type services)
+  "Return the service type of the first service in @var{services}
+which carries xorg configuration. "
+  (and=> (find xorg-configuration-service? services) service-kind))
+
 (define* (set-xorg-configuration config
                                  #:optional
                                  (login-manager-service-type
-                                  (if (target-x86-64?)
-                                      gdm-service-type
-                                      sddm-service-type)))
+                                  (xorg-configuration-service-type
+                                   (desktop-services-for-system))))
   "Tell the log-in manager (of type @var{login-manager-service-type}) to use
 @var{config}, an <xorg-configuration> record."
   (simple-service 'set-xorg-configuration
