@@ -108,6 +108,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages ninja)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system glib-or-gtk)
   #:use-module (guix build-system go)
@@ -683,6 +684,45 @@ transport), SCSI and ATAPI tape drives, and SCSI enclosures.  This utility can
 also send commands associated with starting and stopping the media, loading
 and unloading removable media and some other housekeeping functions.")
     (license license:bsd-3)))
+
+(define-public open-isns
+  (package
+    (name "open-isns")
+    (version "0.103")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/open-iscsi/open-isns")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (modules '((guix build utils)))
+       (sha256
+        (base32 "0008f4sv0z3mmqgf5ifx6rp7nwpp41qd3shhi3b2ci1ir8r91skf"))))
+    (build-system meson-build-system)
+    (arguments
+     (list
+      #:validate-runpath? #f
+      #:tests? #f
+      #:configure-flags
+      #~(list "--sharedstatedir=/var" "-Dslp=disabled"
+              (string-append "-Dsystemddir="
+                             #$output "/lib/systemd"))
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'fix-meson.build
+            (lambda* (#:key outputs #:allow-other-keys)
+              (substitute* "meson.build"
+                (("/usr/lib64")
+                 (string-append (assoc-ref outputs "out") "/lib"))
+                (("/var/lib")
+                 (string-append (assoc-ref outputs "out") "/lib"))))))))
+    (native-inputs (list meson pkg-config ninja))
+    (inputs (list openssl))
+    (home-page "https://github.com/open-iscsi/open-isns")
+    (synopsis "iSNS server and client for Linux")
+    (description "Partial implementation of iSNS, according to RFC4171")
+    (license license:gpl2)))
 
 (define-public idle3-tools
   (package
