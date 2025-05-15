@@ -102,6 +102,7 @@ MODULES =					\
   guix/android-repo-download.scm		\
   guix/bzr-download.scm            		\
   guix/git-download.scm				\
+  guix/go-mod-download.scm			\
   guix/hg-download.scm				\
   guix/hash.scm					\
   guix/swh.scm					\
