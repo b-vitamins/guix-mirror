@@ -59,6 +59,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages m4)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages networking)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
@@ -713,6 +714,39 @@ design.")
      "VSG lets you define a VHDL coding style and provides a command-line tool
 to enforce it.")
     (license license:gpl3+)))
+
+(define-public rogue
+  (package
+    (name "rogue")
+    (version "6.6.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/slaclab/rogue/")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1gsyrwcpc0z4pgw3sgyaww0xi78r79la2pf00ya3dbsbmhwqn7k2"))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:tests? #f                       ;tests require python bindings
+      #:configure-flags
+      #~(list (string-append "-DROGUE_VERSION=v" #$version)
+              "-DROGUE_INSTALL=system")))
+    (native-inputs (list python-numpy))
+    (inputs (list boost
+                  bzip2
+                  python
+                  zeromq))
+    (home-page "https://slaclab.github.io/rogue/")
+    (synopsis "SLAC Data Acquisition System")
+    (description
+     "@code{Rogue} is a library providing hardware abstraction and interface
+functions to @code{Surf}.")
+    (license (license:non-copyleft "file://LICENSE.txt"
+                                   "See LICENSE.txt in the distribution."))))
 
 (define-public sigrok-cli
   (package
