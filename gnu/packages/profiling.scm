@@ -151,30 +151,31 @@ performance measurement opportunities across the hardware and software stack.")
 (define-public otf2
   (package
     (name "otf2")
-    (version "2.1.1")
+    (version "3.1.1")
     (source
      (origin
        (method url-fetch)
-       (uri (string-append "http://www.vi-hps.org/upload/packages/otf2/otf2-"
-                           version ".tar.gz"))
-       (sha256 (base32 "1ls7rz6qwnqbkifpafc95bnfh3m9xbs74in8zxlnhfbgwx11nn81"))))
+       (uri (string-append "https://perftools.pages.jsc.fz-juelich.de/cicd/otf2/tags/otf2-"
+                           version "/otf2-" version ".tar.gz"))
+       (sha256 (base32 "0vhai3xsb1kbqy2fqcvzv9pk886p1iq5pi9mzsadfkmca4x02kjs"))))
     (native-inputs (list python))
-    (outputs '("doc"                              ; 18MB
-               "lib"
-               "out"))
+;    (outputs '("doc"                              ; 18MB
+;               "lib"
+;               "out"))
     (build-system gnu-build-system)
     (arguments
      `(#:configure-flags '("--enable-shared" "--disable-static")
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'install 'licence
-           (lambda* (#:key outputs #:allow-other-keys)
-             (for-each (lambda (output)
-                         (let ((doc (string-append (assoc-ref outputs output)
-                                                   "/share/doc/otf2")))
-                           (install-file "COPYING" doc)))
-                       '("lib" "doc"))
-             #t)))))
+;       #:phases
+;       (modify-phases %standard-phases
+;         (add-after 'install 'licence
+;           (lambda* (#:key outputs #:allow-other-keys)
+;             (for-each (lambda (output)
+;                         (let ((doc (string-append (assoc-ref outputs output)
+;                                                   "/share/doc/otf2")))
+;                           (install-file "COPYING" doc)))
+;                       '("lib" "doc"))
+;             #t)))
+       ))
     (home-page "https://www.vi-hps.org/projects/score-p/")
     (synopsis "Open Trace Format 2 library")
     (description "The Open Trace Format 2 (@dfn{OTF2}) is a scalable,
