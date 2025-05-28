@@ -696,21 +696,20 @@ modular framework for other derived implementations.")
   (package
     (name "gotcha")
     (version "1.0.8")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/LLNL/GOTCHA/archive/refs/tags/"
-                    version ".tar.gz"))
-              (sha256
-               (base32
-                "1141ml0zimhn47wyffn78n4ypsp46qgjy68b6s53r1hn578ccyi6"))))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/LLNL/GOTCHA/archive/refs/tags/"
+             version ".tar.gz"))
+       (sha256
+        (base32 "1141ml0zimhn47wyffn78n4ypsp46qgjy68b6s53r1hn578ccyi6"))))
     (build-system cmake-build-system)
     (arguments
-     `(#:phases
-       (modify-phases %standard-phases
-         (delete 'check))))
+     `(#:phases (modify-phases %standard-phases
+                  (delete 'check))))
     (home-page "https://github.com/LLNL/GOTCHA")
-    (synopsis "GOTCHA is a library for wrapping function calls in shared libraries")
+    (synopsis
+     "GOTCHA is a library for wrapping function calls in shared libraries")
     (description
      "Gotcha is a library that wraps functions. Tools can use gotcha to install hooks into other libraries, for example putting a wrapper function around libc's malloc. It is similar to LD_PRELOAD, but operates via a programmable API.")
     (license license:lgpl2.1)))
