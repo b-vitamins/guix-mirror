@@ -711,7 +711,10 @@ modular framework for other derived implementations.")
     (synopsis
      "GOTCHA is a library for wrapping function calls in shared libraries")
     (description
-     "Gotcha is a library that wraps functions. Tools can use gotcha to install hooks into other libraries, for example putting a wrapper function around libc's malloc. It is similar to LD_PRELOAD, but operates via a programmable API.")
+     "Gotcha is a library that wraps functions. Tools can use gotcha to install
+      hooks into other libraries, for example putting a wrapper function around
+      libc's malloc. It is similar to LD_PRELOAD, but operates via a
+      programmable API.")
     (license license:lgpl2.1)))
 
 (define (make-scorep mpi)
