@@ -709,7 +709,7 @@ modular framework for other derived implementations.")
                   (delete 'check))))
     (home-page "https://github.com/LLNL/GOTCHA")
     (synopsis
-     "GOTCHA is a library for wrapping function calls in shared libraries")
+     "Wrapping function calls in shared libraries")
     (description
      "Gotcha is a library that wraps functions. Tools can use gotcha to install
       hooks into other libraries, for example putting a wrapper function around
