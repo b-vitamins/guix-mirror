@@ -39,6 +39,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bison)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages documentation)
   #:use-module (gnu packages fabric-management)
@@ -61,6 +62,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages valgrind)
+  #:use-module (gnu packages version-control)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 match))
 
@@ -704,9 +706,14 @@ modular framework for other derived implementations.")
        (sha256
         (base32 "1141ml0zimhn47wyffn78n4ypsp46qgjy68b6s53r1hn578ccyi6"))))
     (build-system cmake-build-system)
+    (native-inputs
+     ;; "git" is needed by test/unit/CMakeLists.txt but is not actually used
+     ;; if "check" is provided and DEPENDENCIES_PREINSTALLED is true.
+     (list git
+           check))
     (arguments
-     `(#:phases (modify-phases %standard-phases
-                  (delete 'check))))
+     `(#:configure-flags '("-DGOTCHA_ENABLE_TESTS=on"
+                           "-DDEPENDENCIES_PREINSTALLED=true")))
     (home-page "https://github.com/LLNL/GOTCHA")
     (synopsis
      "Wrapping function calls in shared libraries")
