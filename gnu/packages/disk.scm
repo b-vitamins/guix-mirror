@@ -724,6 +724,52 @@ and unloading removable media and some other housekeeping functions.")
     (description "Partial implementation of iSNS, according to RFC4171")
     (license license:gpl2)))
 
+(define-public open-iscsi
+  (package
+    (name "open-iscsi")
+    (version "2.1.10")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/open-iscsi/open-iscsi")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "18vzjv0x8p9f8pw6pbbssjm52frv1rax6mqzyma72f3nl8qzvd75"))))
+    (build-system meson-build-system)
+    (arguments
+     (list
+      #:configure-flags
+      #~(list "-Dno_systemd=true"
+              (string-append "-Discsi_sbindir="
+                             #$output "/sbin")
+              (string-append "-Ddbroot="
+                             #$output "/var/lib/iscsi")
+              (string-append "--sbindir="
+                             #$output "/sbin"))
+      ;; 2nd of 4th test fails with
+      ;; iSCSI ERROR: Could not open /run/lock/iscsi: 2: No such file or directory
+      ;; # ../source/libopeniscsiusr/idbm.c:_idbm_lock():327
+      #:tests? #f))
+    (native-inputs (list meson pkg-config perl ninja))
+    (inputs (list kmod open-isns openssl
+                  (list util-linux "lib")))
+    (home-page "https://github.com/open-iscsi/open-iscsi")
+    (synopsis "iSCSI tools for Linux")
+    (description
+     "The Open-iSCSI project is a high-performance, transport independent,
+multi-platform implementation of RFC3720 iSCSI. Features:
+@enumerate
+@item highly optimized and very small-footprint data path
+@item persistent configuration database
+@item SendTargets discovery
+@item CHAP
+@item PDU header Digest
+@item multiple sessions
+@end enumerate")
+  (license (list license:gpl3 license:lgpl3))))
+
 (define-public idle3-tools
   (package
     (name "idle3-tools")
