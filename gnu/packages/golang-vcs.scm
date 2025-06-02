@@ -44,6 +44,54 @@
 ;;; Libraries:
 ;;;
 
+(define-public forgejo-runner
+  (package
+    (name "forgejo-runner")
+    (version "6.2.2")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://code.forgejo.org/forgejo/runner.git")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0bdn1pk9ghbyd4i9hmk7rfhqdkz9l5w4wgrwiryg8qpwplb7j8mz"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:go go-1.23
+      #:import-path "gitea.com/gitea/act_runner"
+      #:embed-files #~(list ".*\\.json" ".*\\.js" ".*\\.sh")
+      #:tests? #f
+      #:phases #~(modify-phases %standard-phases
+                   (add-after 'install 'rename-binary
+                     (lambda _
+                       (rename-file (string-append #$output "/bin/act_runner")
+                                    (string-append #$output "/bin/forgejo-runner")))))))
+    (propagated-inputs
+     (list go-github-com-joho-godotenv
+           go-github-com-avast-retry-go
+           go-gopkg-in-yaml-v3
+           go-github-com-sirupsen-logrus
+           go-google-golang-org-protobuf
+           go-github-com-google-uuid
+           go-golang-org-x-term
+           go-golang-org-x-time
+           go-github-com-spf13-cobra
+           go-github-com-mattn-go-isatty
+           go-github-com-nektos-act
+           go-github-com-avast-retry-go-v4
+           go-connectrpc-com-connect
+           go-code-gitea-io-actions-proto-go-ping
+           go-code-gitea-io-actions-proto-go-runner))
+    (home-page "https://code.forgejo.org/forgejo/runner")
+    (synopsis "Forgejo Runner")
+    (description
+     "Forgejo Runner is a daemon that connects to a Forgejo instance and runs
+jobs for continuous integration.")
+    (license license:expat)))
+
 (define-public go-code-gitea-io-actions-proto-go-ping
   (package
     (name "go-code-gitea-io-actions-proto-go-ping")
