@@ -721,7 +721,7 @@ and unloading removable media and some other housekeeping functions.")
     (inputs (list openssl))
     (home-page "https://github.com/open-iscsi/open-isns")
     (synopsis "iSNS server and client for Linux")
-    (description "Partial implementation of iSNS, according to RFC4171")
+    (description "Partial implementation of @acronym{iSNS, Internet Storage Name Service}, according to RFC4171")
     (license license:gpl2)))
 
 (define-public open-iscsi
