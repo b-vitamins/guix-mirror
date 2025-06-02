@@ -3645,6 +3645,43 @@ cgroup uses the OCI runtime-spec found
            go-golang-org-x-sys
            go-google-golang-org-protobuf))))
 
+;; For the forgejo-runner build, we only need the pkg/userns module which
+;; doesn't require the massive dependency tree for all of containerd, so we
+;; cheat and skip the build and avoid having to package a large number of
+;; additional dependencies.
+(define-public go-github-com-containerd-containerd
+  (package
+    (name "go-github-com-containerd-containerd")
+    (version "1.7.12")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/containerd/containerd")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1jwrdiglhqxccmmiq33li3myrb409mvskvcghli411fs9r46lxm3"))
+       (snippet
+        #~(begin
+            (use-modules (guix build utils))
+            (delete-file-recursively "vendor")))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/containerd/containerd"
+      #:skip-build? #t
+      #:tests? #f))
+    (home-page "https://github.com/containerd/containerd")
+    (synopsis "Container runtime support daemon")
+    (description
+     "containerd is a container runtime with an emphasis on simplicity,
+robustness, and portability.  It is available as a daemon, which can manage
+the complete container lifecycle of its host system: image transfer and
+storage, container execution and supervision, low-level storage and network
+attachments, etc.")
+    (license license:asl2.0)))
+
 (define-public go-github-com-containerd-console
   (package
     (name "go-github-com-containerd-console")
