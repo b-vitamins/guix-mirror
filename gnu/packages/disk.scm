@@ -758,7 +758,7 @@ and unloading removable media and some other housekeeping functions.")
     (home-page "https://github.com/open-iscsi/open-iscsi")
     (synopsis "iSCSI tools for Linux")
     (description
-     "The Open-iSCSI project is a high-performance, transport independent,
+     "The Open-@acronym{iSCSI, Internet Small Computer Systems Interface} project is a high-performance, transport independent,
 multi-platform implementation of RFC3720 iSCSI. Features:
 @enumerate
 @item highly optimized and very small-footprint data path
