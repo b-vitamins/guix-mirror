@@ -38,6 +38,7 @@
   #:use-module (gnu packages bison)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages c)
   #:use-module (gnu packages cpp)
@@ -58,6 +59,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
+  #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages serialization)
@@ -69,7 +71,8 @@
   #:use-module (gnu packages xml)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (guix build-system python))
+  #:use-module (guix build-system python)
+  #:use-module (srfi srfi-1))
 
 (define-public avogadrolibs
   (package
@@ -1528,3 +1531,89 @@ C library (also with a Fortran API) to evaluate one- and two-electron
 integrals for Gaussian type functions.")
        (properties `((tunable? . #t)))
        (license license:gpl3+)))))
+
+(define-public python-pyscf
+  (package
+    (name "python-pyscf")
+    (version "2.9.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/pyscf/pyscf")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1lj48c749aqf9zd5xbshjsfr0y972r2nsm8lf3760jbfadg9jdsi"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     (list python-numpy
+           python-scipy
+           python-h5py))
+    (inputs (list
+             ;; Use qcint when tuning for x86_64.
+             (if (and (assq 'cpu-tuning (package-properties this-package))
+                      (target-x86-64?))
+                 qcint
+                 libcint)
+             xcfun
+             openblas))
+    (native-inputs
+     (list cmake-minimal
+           gcc ; XXX: To support tuning with python-build-system.
+           gnu-make
+           python-nose
+           python-wheel))
+    (arguments
+     '(#:modules
+       ((guix build python-build-system)
+        (guix build utils)
+        (ice-9 textual-ports))
+       ;; Some tests take a very long time and libxc support is not enabled.
+       #:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'build 'set-cmake-arguments
+           (lambda* (#:key inputs outputs target configure-flags #:allow-other-keys)
+             ;; Copied from cmake-build-system
+             (let* ((out (assoc-ref %outputs "out"))
+                    (args `("-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+                            ,(string-append "-DCMAKE_INSTALL_PREFIX=" out)
+                            ;; ensure that the libraries are installed into /lib
+                            "-DCMAKE_INSTALL_LIBDIR=lib"
+                            ;; add input libraries to rpath
+                            "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
+                            ;; add (other) libraries of the project itself to rpath
+                            ,(string-append "-DCMAKE_INSTALL_RPATH=" out "/lib")
+                            ;; enable verbose output from builds
+                            "-DCMAKE_VERBOSE_MAKEFILE=ON"
+
+                            ;;  Cross-build
+                            ,@(if target
+                                  (list (string-append "-DCMAKE_C_COMPILER="
+                                                       target "-gcc")
+                                        (string-append "-DCMAKE_CXX_COMPILER="
+                                                       target "-g++")
+                                        (if (string-contains target "mingw")
+                                            "-DCMAKE_SYSTEM_NAME=Windows"
+                                            "-DCMAKE_SYSTEM_NAME=Linux"))
+                                  '())
+                            "-DENABLE_LIBXC=OFF"
+                            "-DBUILD_LIBXC=OFF"
+                            "-DBUILD_XCFUN=OFF"
+                            "-DBUILD_LIBCINT=OFF")))
+
+               ;; This is passed to 'cmake' in setup.py
+               (setenv "CMAKE_CONFIGURE_ARGS" (string-join args)))))
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "nosetests" "pyscf" "-v")))))))
+    (home-page "https://github.com/pyscf/pyscf")
+    (synopsis "Python library for quantum chemistry calculations")
+    (description "@code{PySCF} (Python-based Simulations of Chemistry
+ Framework) is a Python library for quantum chemistry calculations and method
+ development.  Most of the functionality is implemented in Python, while
+ computationally critical parts are implemented in C.")
+    (properties '((tunable? . #t)))
+    (license license:asl2.0)))
