@@ -1617,3 +1617,36 @@ integrals for Gaussian type functions.")
  computationally critical parts are implemented in C.")
     (properties '((tunable? . #t)))
     (license license:asl2.0)))
+
+(define-public python-geometric
+  (package
+    (name "python-geometric")
+    (version "1.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/leeping/geomeTRIC")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0w3c71wvhnc44pfafcjfgqkjimkcdkpjk3bahg9v6l1z8c0cyhfy"))))
+    (build-system python-build-system)
+    (native-inputs (list python-pytest-cov))
+    (propagated-inputs
+     (list python-numpy python-scipy python-networkx))
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key tests? inputs outputs #:allow-other-keys)
+             (when tests?
+               (add-installed-pythonpath inputs outputs)
+               (invoke "pytest" "--cov=geometric")))))))
+    (home-page "https://github.com/leeping/geomeTRIC")
+    (synopsis "Geometry optimization of molecular structures")
+    (description "@code{geomeTRIC} is a python library and program
+ for geometry optimization of molecular structures, which works with
+ different external quantum chemistry (and molecular mechanics)
+ softwares.")
+    (license license:bsd-3)))
