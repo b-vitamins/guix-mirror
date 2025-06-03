@@ -1679,3 +1679,27 @@ integrals for Gaussian type functions.")
 a Fortran library for operating on molecular structures and reading and
 writing common geometry file formats.")
     (license license:asl2.0)))
+
+(define-public toml-f
+  (package
+    (name "toml-f")
+    (version "0.4.2")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/toml-f/toml-f")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0lfhk0qqf00gcsl9h78fi3s4k9q8x1aiyp90vyqdv98dnpi9ripr"))))
+    (build-system meson-build-system)
+    (inputs (list test-drive))
+    (native-inputs (list gfortran pkg-config))
+    (home-page "https://github.com/toml-f/toml-f")
+    (synopsis "Fortran TOML parser")
+    (description "This library provides an implementation of TOML data
+serialization and deserialization in Fortran.")
+    ;; Dual license
+    (license (list license:expat license:asl2.0))))
