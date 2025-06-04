@@ -313,24 +313,12 @@ added to the pack."
 to the search paths of PROFILE."
   (define build
     (with-extensions (list guile-gcrypt)
-      (with-imported-modules `(((guix config) => ,(make-config.scm))
-                               ,@(source-module-closure
-                                  `((guix profiles)
-                                    (guix search-paths))
-                                  #:select? not-config?))
         #~(begin
-            (use-modules (guix profiles) (guix search-paths)
-                         (ice-9 match))
+            (use-modules (ice-9 match))
 
             (call-with-output-file #$output
               (lambda (port)
-                (for-each (match-lambda
-                            ((spec . value)
-                             (format port "~a=~a~%export ~a~%"
-                                     (search-path-specification-variable spec)
-                                     value
-                                     (search-path-specification-variable spec))))
-                          (profile-search-paths #$profile))))))))
+                (format port "source ~a/etc/profile~%" #$profile))))))
 
   (computed-file "singularity-environment.sh" build))
 
