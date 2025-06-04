@@ -397,6 +397,8 @@ When unspecified, listen for any hosts/IP addresses.")
    (list-of-strings '())
    "Extra configuration values to append to the LightDM configuration file."))
 
+(record-xorg-configuration-service! <lightdm-configuration>)
+
 (define (lightdm-configuration->packages config)
   "Return all the greeter packages and their assets defined in CONFIG, a
 <lightdm-configuration> object, as well as the lightdm package itself."

@@ -1,6 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
 ;;; Copyright © 2016 David Craven <david@craven.ch>
-;;; Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019, 2025 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2019 Jesse Gildersleve <jessejohngildersleve@protonmail.com>
 ;;; Copyright © 2020 Jakub Kądziołka <kuba@kadziolka.net>
 ;;; Copyright © 2023, 2024 Zheng Junjie <873216071@qq.com>
@@ -115,6 +115,8 @@
                           (default ""))
   (relogin?               sddm-configuration-relogin?
                           (default #f)))
+
+(record-xorg-configuration-service! <sddm-configuration>)
 
 (define (sddm-configuration-file config)
   (mixed-text-file "sddm.conf" "

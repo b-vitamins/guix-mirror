@@ -140,13 +140,30 @@
             gdm-service-type
 
             handle-xorg-configuration
-            set-xorg-configuration))
+            set-xorg-configuration
+
+            record-xorg-configuration-service!
+            xorg-configuration-service?))
 
 ;;; Commentary:
 ;;;
 ;;; Services that relate to the X Window System.
 ;;;
 ;;; Code:
+
+(define %xorg-configuration-record-types
+  ;; Maps record type descriptors to their xorg configuration accessor.
+  (make-hash-table))
+
+(define* (record-xorg-configuration-service! record-type)
+  "Record RECORD-TYPE as providing an <xorg-configuration>."
+  (hashq-set! %xorg-configuration-record-types record-type #t))
+
+(define (xorg-configuration-service? service)
+  "Return true if SERVICE is known to provide an <xorg-configuration> value."
+  (let ((value (service-value service)))
+    (and (struct? value)
+         (hashq-ref %xorg-configuration-record-types (struct-vtable value)))))
 
 (define %default-xorg-modules
   ;; Default list of modules loaded by the server.  When multiple drivers
@@ -724,6 +741,8 @@ a `service-extension', as used by `set-xorg-configuration'."
   (sessreg slim-configuration-sessreg
            (default sessreg)))
 
+(record-xorg-configuration-service! <slim-configuration>)
+
 (define (slim-pam-service config)
   "Return a PAM service for @command{slim}."
   (list (unix-pam-service
@@ -1169,6 +1188,8 @@ argument.")))
   (wayland-session gdm-configuration-wayland-session
                    (default gdm-wayland-session-wrapper)))
 
+(record-xorg-configuration-service! <gdm-configuration>)
+
 (define (gdm-dconf-profiles config)
   (if (gdm-configuration-auto-suspend? config)
       '()
@@ -1367,16 +1388,11 @@ polkit.addRule(function(action, subject) {
                    "Run the GNOME Desktop Manager (GDM), a program that allows
 you to log in in a graphical session, whether or not you use GNOME."))))
 
-;; Since GDM depends on Rust and Rust is not available on all platforms,
-;; use SDDM as the fall-back display manager.
-;; TODO: Switch the condition to take into account if Rust is supported and
-;; match the configuration in desktop-services-for-system.
 (define* (set-xorg-configuration config
                                  #:optional
                                  (login-manager-service-type
-                                  (if (target-x86-64?)
-                                      gdm-service-type
-                                      sddm-service-type)))
+                                  (find xorg-configuration-service?
+                                        (desktop-services-for-system))))
   "Tell the log-in manager (of type @var{login-manager-service-type}) to use
 @var{config}, an <xorg-configuration> record."
   (simple-service 'set-xorg-configuration
