@@ -26,6 +26,7 @@
 ;;; Copyright © 2025 Ashvith Shetty <ashvithshetty0010@zohomail.in>
 ;;; Copyright © 2025 Maxim Cournoyer <maxim.cournoyer@gmail.com>
 ;;; Copyright © 2025 Gabriel Santos <gabrielsantosdesouza@disroot.org>
+;;; Copyright © 2025 Noé Lopez <noelopez@free.fr>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -68,6 +69,7 @@
   #:use-module (gnu packages gl)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
+  #:use-module (gnu packages gstreamer)
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages ibus)
   #:use-module (gnu packages imagemagick)
@@ -445,6 +447,49 @@ highlights, and gradients for some depth.")
      "Bibata is an open-source, compact, and material designed
 cursor set.  This project aims at improving the cursor experience.")
     (license license:gpl3)))
+
+(define-public gapless
+  (package
+    (name "gapless")
+    (version "4.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.gnome.org/neithern/g4music.git")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "09bph7cznzxclxysp1cd715vzpdhx03pnq6cmgw44mma95lhah6p"))))
+    (build-system meson-build-system)
+    (arguments
+     (list
+      #:glib-or-gtk? #t
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'skip-post-installation
+            (lambda _
+              (substitute* "meson.build"
+                (("gtk_update_icon_cache: true")
+                 "gtk_update_icon_cache: false")
+                (("update_desktop_database: true")
+                 "update_desktop_database: false")))))))
+    (native-inputs (list gettext-minimal
+                         `(,glib "bin")
+                         pkg-config
+                         vala))
+    (inputs (list gstreamer
+                  gst-plugins-base
+                  gtk
+                  libadwaita))
+    (home-page "https://gitlab.gnome.org/neithern/g4music")
+    (synopsis "Light weight music player written in GTK4")
+    (description "Gapless, previously known as G4Music, is a light weight music
+player written in GTK4, focusing on large music collection.
+
+The executable is named g4music.")
+    ;; Most files don't have the header specifying or any later version.
+    (license (list license:gpl3 license:gpl3+))))
 
 (define-public gnome-plots
   (package
