@@ -36,7 +36,6 @@
 #include <netdb.h>
 #include <strings.h>
 #include <exception>
-#include <iostream>
 
 #include <libintl.h>
 #include <locale.h>
@@ -544,21 +543,18 @@ using `--build-users-group' is highly recommended\n"));
 	{
 	  std::string chroot_dirs;
 
-	  chroot_dirs = settings.get ("build-extra-chroot-dirs",
-				      (std::string) "");
+	  chroot_dirs = settings.get ("build-extra-chroot-dirs", std::string{});
+
 	  printMsg (lvlDebug,
 		    format ("extra chroot directories: '%1%'") % chroot_dirs);
 	}
 
       if (useDiscover)
       {
-        Strings args;
+        char* args[] { (char*)"guix", (char*)"discover", NULL };
 
-        args.push_back("guix");
-        args.push_back("discover");
-
-        startProcess([&]() {
-          execv(settings.guixProgram.c_str(), stringsToCharPtrs(args).data());
+        startProcess([&args]() {
+          execv(settings.guixProgram.c_str(), args);
         });
       }
 
