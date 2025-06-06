@@ -43,6 +43,7 @@
 ;;; Copyright © 2024 Nguyễn Gia Phong <mcsinyx@disroot.org>
 ;;; Copyright © 2025 Frederick Muriuki Muriithi <fredmanglis@gmail.com>
 ;;; Copyright © 2025 nomike Postmann <nomike@nomike.com>
+;;; Copyright © 2025 Matthew Elwin <elwin@northwestern.edu>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -5492,3 +5493,38 @@ and mogan.")
 towards field theory.")
     (home-page "https://cadabra.science/")
     (license license:gpl3+)))
+
+(define-public orocos-kdl
+  (let ((commit "db25b7e480e068df068232064f2443b8d52a83c7")
+        (revision "0"))
+    (package
+      (name "orocos-kdl")
+      (version (git-version "1.5.1" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/orocos/orocos_kinematics_dynamics")
+               (commit commit)))
+         (sha256
+          (base32 "1y8288hfxpn8b7cl18jsyj38j1px201vjkb770b43x9gfhm3yl41"))
+         (file-name (git-file-name name version))))
+      (build-system cmake-build-system)
+      (native-inputs (list cppunit))
+      (propagated-inputs (list eigen))
+      (arguments
+       (list
+        #:configure-flags '(list "-DENABLE_TESTS=ON")
+        #:test-target "check"
+        #:phases
+        #~(modify-phases %standard-phases
+            (add-after 'unpack 'chdir
+              (lambda _
+                (chdir "orocos_kdl"))))))
+      (home-page "https://docs.orocos.org/kdl/overview.html")
+      (synopsis
+       "Open Robot Control Software's Kinematics and Dynamics Library")
+      (description
+       "Library for computing kinematics and dynamics for kinematic chains.
+A serial robot arm is one type of kinematic chain.")
+      (license license:lgpl2.1+))))
