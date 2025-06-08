@@ -736,6 +736,7 @@ functions.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/aws/aws-sdk-go"
       #:phases
       #~(modify-phases %standard-phases
@@ -1489,6 +1490,7 @@ and RFC 5389).")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/cenkalti/backoff/v4"))
     (home-page "https://github.com/cenkalti/backoff")
     (synopsis "The exponential backoff algorithm in Go")
@@ -3760,6 +3762,7 @@ APIs.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:skip-build? #t
       #:import-path "github.com/gogo/protobuf"
       ;; protoc: exec: "protoc-min-version": executable file not found in $PATH
@@ -4030,7 +4033,9 @@ parameters.")
         (base32 "0j2xjy8xrk9y9k6bqpvimj84i6hg1wwsyvwsb0axhmp49cmnrp86"))))
     (build-system go-build-system)
     (arguments
-     '(#:import-path "github.com/google/safehtml"))
+     (list
+      #:go go-1.23
+      #:import-path "github.com/google/safehtml"))
     (propagated-inputs
      (list go-golang-org-x-text))
     (home-page "https://github.com/google/safehtml")
@@ -4770,8 +4775,10 @@ authenticated identities and their attributes.")
         (base32 "1rv495j8j2x6avw5hqpf7rpiakr5gdsx6pv8rfn0ff7vi35zfa62"))))
     (build-system go-build-system)
     (arguments
-     '(#:import-path "github.com/jcmturner/gokrb5/v8"
-       #:unpack-path "github.com/jcmturner/gokrb5"))
+     (list
+      #:go go-1.23
+      #:import-path "github.com/jcmturner/gokrb5/v8"
+      #:unpack-path "github.com/jcmturner/gokrb5"))
     (native-inputs
      (list go-github-com-stretchr-testify))
     (propagated-inputs
@@ -4933,7 +4940,9 @@ described in @url{https://www.rfc-editor.org/rfc/rfc959,RFC 959}.")
         (base32 "18zyr9nlywmwp3wpzcjxrgq9s9d2mmc6zg6xhsna00m663nkyc3n"))))
     (build-system go-build-system)
     (arguments
-     '(#:import-path "github.com/jmespath/go-jmespath"))
+     (list
+      #:go go-1.23
+      #:import-path "github.com/jmespath/go-jmespath"))
     (native-inputs
      (list go-github-com-davecgh-go-spew
            go-github-com-pmezard-go-difflib
@@ -5010,6 +5019,7 @@ controlled.  It is based on netlink messages.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/json-iterator/go"
       #:test-flags
       ;; XXX: Try to skip just "Test_symmetric/map[test.stringKeyType]string".
@@ -7086,6 +7096,7 @@ API.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/perimeterx/marshmallow"))
     (native-inputs
      (list go-github-com-go-test-deep))
@@ -7638,6 +7649,7 @@ Protocol,SCTP} as specified in
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/pion/stun"))
     (native-inputs
      (list go-github-com-stretchr-testify))
@@ -7696,6 +7708,7 @@ Protocol,SCTP} as specified in
         (base32 "0yavl76y0fida9f1jfdmzdg7rm5jhp6kvdgn3smsf93jad1vbr2x"))))
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/pion/stun/v3"))
     (propagated-inputs
      (list go-github-com-pion-dtls-v3
@@ -8332,6 +8345,7 @@ protocol.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/quic-go/webtransport-go"
       ;; Error: "68" is not greater than "80"
       #:test-flags #~(list "-skip" "TestDatagrams")))
@@ -9261,6 +9275,7 @@ encoding library for the MessagePack, CBOR, JSON and the Binc formats.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "github.com/urfave/negroni"))
     (home-page "https://github.com/urfave/negroni")
     (synopsis "Idiomatic HTTP Middleware for Golang")
@@ -9724,6 +9739,7 @@ programming language.")
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       ;; validation of time strings.  only RFC3339 not all of ISO 8601 are
       ;; valid.  expects: false, given true Schema: {"format":"time"} Data:
       ;; "01:01:01,1111"
@@ -10236,6 +10252,7 @@ lists)
     (build-system go-build-system)
     (arguments
      (list
+      #:go go-1.23
       #:import-path "go.opencensus.io"
       #:test-flags
       #~(list "-skip"
