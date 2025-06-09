@@ -988,6 +988,50 @@ range of debugging features.  It has all the features one would expect
 from an emulator---from save states to scaling filters.")
     (license license:expat)))
 
+(define-public stella
+  (package
+    (name "stella")
+    (version "7.0c")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/stella-emu/stella")
+             (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0kcbjlsi5wy0pia7apck7va86yx9y6iyy5245ylkn77khaf7wr13"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:phases
+      #~(modify-phases %standard-phases
+          ;; No check directive in the Makefile
+          (delete 'check)
+          ;; The parser files were machine-generated; let's regenerate them
+          (add-before 'build 'regenerate-yacc-files
+            (lambda _
+              (with-directory-excursion "src/debugger/yacc"
+                (delete-file "y.tab.c")
+                (delete-file "y.tab.h")
+                (invoke "make" "-f" "Makefile.yacc")))))))
+    (inputs (list sdl2 sqlite))
+    (native-inputs (list bison pkg-config sdl2))
+    (home-page "https://stella-emu.github.io/")
+    (synopsis "Open-source Atari 2600 VCS emulator")
+    (description
+     "Stella is a multi-platform Atari 2600 VCS emulator released under the
+GNU General Public License (GPL).  Stella was originally developed for Linux by
+Bradford W. Mott, and is currently maintained by Stephen Anthony.  Since its
+original release several people have joined the development team to port
+Stella to other operating systems such as AcornOS, AmigaOS, DOS, FreeBSD,
+IRIX, Linux, OS/2, MacOS, Unix, and Windows.  The development team is working
+hard to perfect the emulator and we hope you enjoy our effort.
+
+Stella is now DonationWare. Please help to encourage further Stella
+development by considering a contribution.")
+    (license license:gpl2+)))
+
 (define-public mupen64plus-core
   (package
     (name "mupen64plus-core")
