@@ -49,17 +49,8 @@
   (display (G_ "Usage: guix import crate PACKAGE-NAME
 Import and convert the crates.io package for PACKAGE-NAME.\n"))
   (display (G_ "
-  -r, --recursive        import packages recursively"))
-  (display (G_ "
-      --recursive-dev-dependencies
-                         include dev-dependencies recursively"))
-  (newline)
-  (display (G_ "
       --allow-yanked     allow importing yanked crates if no alternative
                          satisfying the version requirement is found"))
-  (display (G_ "
-      --mark-missing     comment out the desired dependency if no
-                         sufficient package exists for it"))
   (newline)
   (display (G_ "
   -f, --lockfile=FILE    import dependencies from FILE, a 'Cargo.lock' file"))
@@ -80,18 +71,9 @@ Import and convert the crates.io package for PACKAGE-NAME.\n"))
          (option '(#\V "version") #f #f
                  (lambda args
                    (show-version-and-exit "guix import crate")))
-         (option '(#\r "recursive") #f #f
-                 (lambda (opt name arg result)
-                   (alist-cons 'recursive #t result)))
-         (option '("recursive-dev-dependencies") #f #f
-                 (lambda (opt name arg result)
-                   (alist-cons 'recursive-dev-dependencies #t result)))
          (option '("allow-yanked") #f #f
                  (lambda (opt name arg result)
                    (alist-cons 'allow-yanked #t result)))
-         (option '("mark-missing") #f #f
-                 (lambda (opt name arg result)
-                   (alist-cons 'mark-missing #t result)))
          (option '(#\f "lockfile") #f #t
                  (lambda (opt name arg result)
                    (alist-cons 'lockfile arg result)))
@@ -147,17 +129,10 @@ Import and convert the crates.io package for PACKAGE-NAME.\n"))
                       (newline port)
                       (close-port port)))
                   source-expressions))
-               ((assoc-ref opts 'recursive)
-                (crate-recursive-import
-                 name #:version version
-                 #:recursive-dev-dependencies?
-                 (assoc-ref opts 'recursive-dev-dependencies)
-                 #:allow-yanked? (assoc-ref opts 'allow-yanked)))
                (else
                 (crate->guix-package
-                 name #:version version #:include-dev-deps? #t
-                 #:allow-yanked? (assoc-ref opts 'allow-yanked)
-                 #:mark-missing? (assoc-ref opts 'mark-missing))))
+                 name #:version version
+                 #:allow-yanked? (assoc-ref opts 'allow-yanked))))
          ((or #f '())
           (leave (G_ "failed to download meta-data for package '~a'~%")
                  (if version
