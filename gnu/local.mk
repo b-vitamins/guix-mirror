@@ -597,6 +597,7 @@ GNU_SYSTEM_MODULES =				\
   %D%/packages/tryton.scm			\
   %D%/packages/qt.scm				\
   %D%/packages/quantum.scm			\
+  %D%/packages/rabbitmq.scm			\
   %D%/packages/racket.scm			\
   %D%/packages/radio.scm			\
   %D%/packages/ragel.scm			\
@@ -778,6 +779,7 @@ GNU_SYSTEM_MODULES =				\
   %D%/services/sound.scm			\
   %D%/services/herd.scm				\
   %D%/services/pm.scm				\
+  %D%/services/rabbitmq.scm			\
   %D%/services/rsync.scm			\
   %D%/services/samba.scm			\
   %D%/services/sddm.scm				\
@@ -2183,6 +2185,7 @@ dist_patch_DATA =						\
   %D%/packages/patches/qtwayland-cleanup-callbacks.patch	\
   %D%/packages/patches/qtwayland-6-update-wayland-xml.patch	\
   %D%/packages/patches/qtwayland-update-wayland-xml.patch	\
+  %D%/packages/patches/rabbitmq-defaults.patch		\
   %D%/packages/patches/ragel-char-signedness.patch		\
   %D%/packages/patches/randomjungle-disable-static-build.patch	\
   %D%/packages/patches/rapidcheck-fix-libs.patch		\
